@@ -29,10 +29,8 @@ namespace veDDDa
             _windows.Add(rightEyeWin);
             rightEyeWin.Show();
 
-            DispatcherTimer timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(1000.0 / FRAMERATE)
-            };
+            DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Send);
+            timer.Interval = TimeSpan.FromMilliseconds(1000.0 / FRAMERATE);
             float accTime = 0.0f;
             var lastTime = DateTime.Now;
             timer.Tick += (s, _) =>

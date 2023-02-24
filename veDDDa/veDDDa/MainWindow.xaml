@@ -7,7 +7,7 @@
         xmlns:tk="clr-namespace:OpenTK;assembly=OpenTK"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <WindowsFormsHost x:Name="winFormsHost"/>
+    <Grid Background="Red" Margin="0">
+        <WindowsFormsHost x:Name="winFormsHost" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="0"/>
     </Grid>
 </Window>

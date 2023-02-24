@@ -46,9 +46,18 @@ namespace veDDDa
             _winformGLControl.Dock = System.Windows.Forms.DockStyle.Fill;
             _winformGLControl.Paint += _winformGLControl_Paint;
             winFormsHost.Child = _winformGLControl;
-            winFormsHost.Width = 800;
-            winFormsHost.Height = 600;
+            //winFormsHost.Width = this.ActualWidth;
+            //winFormsHost.Height = this.ActualHeight;
+            _winformGLControl.Size = new System.Drawing.Size((int)this.ActualWidth, (int)this.ActualHeight);
+            this.SizeChanged += MainWindow_SizeChanged;
         }
+
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            size = new Size(this.ActualWidth, this.ActualHeight);
+            _winformGLControl.Size = new System.Drawing.Size((int)this.ActualWidth, (int)this.ActualHeight);
+        }
+
         public void ForceUpdate()
         {
             _winformGLControl.Invalidate();
@@ -72,13 +81,16 @@ namespace veDDDa
 
         public void UpdateShaderCode(string shader)
         {
-            var boilerPlate = File.ReadAllText("./Boilerplate.glsl");
-            var formattedCode = boilerPlate.Replace("__REPLACE__", shader);
-            Build(formattedCode);
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                var boilerPlate = File.ReadAllText("./Boilerplate.glsl");
+                var formattedCode = boilerPlate.Replace("__REPLACE__", shader);
+                Build(formattedCode);
+            }));
         }
         private static string GetShaderInfoLog(int shader)
         {
-            const int MaxLength = 1024*10;
+            const int MaxLength = 1024 * 10;
 
             //string infoLog = new StringBuilder(MaxLength).ToString();
             int length;
@@ -88,12 +100,17 @@ namespace veDDDa
         }
         public void Build(string code)
         {
+            //_winformGLControl.MakeCurrent();
             int fragmentIndex = 0;
             fragmentIndex = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(fragmentIndex, code);
             GL.CompileShader(fragmentIndex);
+            var err = GL.GetError();
             int compileStatus = 0;
             GL.GetShader(fragmentIndex, ShaderParameter.CompileStatus, out compileStatus);
+            err = GL.GetError();
+            //GL.
+
             if (compileStatus == 0)
                 throw new InvalidOperationException("unable to compiler fragment shader: " + GetShaderInfoLog(fragmentIndex));
 
