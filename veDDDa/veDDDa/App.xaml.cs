@@ -16,7 +16,7 @@ namespace veDDDa
     public partial class App : Application
     {
         public const double FRAMERATE = 60.0;
-        public const string SHADER_PATH = @"C:\path\to\folder";
+        public const string SHADER_PATH = @"C:\Users\z0rg\Documents\Projects\Perso\veDDDa\veDDDa\veDDDa\Shader.glsl";
         private List<MainWindow> _windows;
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -43,35 +43,53 @@ namespace veDDDa
                 lastTime = curTime;
                 foreach (var win in _windows)
                 {
+                    win.ForceUpdate();
                     win.UpdateUniforms(accTime);
                 }
                 //_winformGLControl.Invalidate();
                 //_winformGLControl_Paint(null, null);
             };
+            timer.Start();
+            var controlWin = new ControlWindow();
+            controlWin.SetWatchingFile(SHADER_PATH);
+            controlWin.Show();
+            try
+            {
 
-            var watcher = new FileSystemWatcher(SHADER_PATH);
+                var watcher = new FileSystemWatcher(Path.GetDirectoryName(SHADER_PATH));
+                watcher.NotifyFilter = NotifyFilters.Attributes
+                                     | NotifyFilters.CreationTime
+                                     | NotifyFilters.DirectoryName
+                                     | NotifyFilters.FileName
+                                     | NotifyFilters.LastAccess
+                                     | NotifyFilters.LastWrite
+                                     | NotifyFilters.Security
+                                     | NotifyFilters.Size;
 
-            watcher.NotifyFilter = NotifyFilters.Attributes
-                                 | NotifyFilters.CreationTime
-                                 | NotifyFilters.DirectoryName
-                                 | NotifyFilters.FileName
-                                 | NotifyFilters.LastAccess
-                                 | NotifyFilters.LastWrite
-                                 | NotifyFilters.Security
-                                 | NotifyFilters.Size;
+                watcher.Changed += Watcher_Changed;
 
-            watcher.Changed += Watcher_Changed;
-
-            watcher.EnableRaisingEvents = true;
-
+                watcher.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            _updateShader();
         }
 
-        private void Watcher_Changed(object sender, FileSystemEventArgs e)
+        private void _updateShader()
         {
-            var shaderCode = File.ReadAllText(e.FullPath);
+            var shaderCode = File.ReadAllText(SHADER_PATH);
             foreach (var win in _windows)
             {
                 win.UpdateShaderCode(shaderCode);
+            }
+        }
+        private void Watcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            if (e.FullPath == SHADER_PATH)
+            {
+                _updateShader();
             }
         }
     }
