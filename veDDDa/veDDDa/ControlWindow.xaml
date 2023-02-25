@@ -5,17 +5,112 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:veDDDa"
         mc:Ignorable="d"
-        Title="ControlWindow" Height="200" Width="300">
+        Title="ControlWindow">
     <Grid Background="#FFFF7700">
         <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
             <UniformGrid Columns="1">
-
                 <Slider IsSnapToTickEnabled="True" TickFrequency="1" Width="200"></Slider>
                 <TextBlock VerticalAlignment="Center">
                     <Run FontWeight="Black">Watching file : </Run>
                     <Run x:Name="textRunFilepath">C:\filepath\shader.glsl</Run>
                 </TextBlock>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Width="50">
+                        <TextBlock TextWrapping="Wrap" TextAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown">Open Left Eye</TextBlock>
+                    </Button>
+                    <Button Width="50" Grid.Column="1">
+                        <TextBlock TextWrapping="Wrap" TextAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown_1">Open Right Eye</TextBlock>
+                    </Button>
+                </Grid>
+                <TextBlock TextWrapping="Wrap" Foreground="Orange" Background="#606060" Height="100" x:Name="LogsTB"/>
             </UniformGrid>
+            <StackPanel Orientation="Vertical" Grid.Column="1" x:Name="stackLeft" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=LeftEyeWin.DataContext}">
+                <TextBlock>Left Eye</TextBlock>
+                <TextBlock>TopLeft</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>X :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopLeftX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Y :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopLeftY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <TextBlock>TopRight</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>X :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopRightX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Y :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopRightY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <TextBlock>BottomLeft</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>X :</TextBlock>
+                    <Slider Width="200"   Value="{Binding ElementName=stackLeft, Path=DataContext.BottomLeftX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Y :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomLeftY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <TextBlock>BottomRight</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>X :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomRightX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Y :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomRightY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Grid.Column="2" x:Name="stackRight" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=RightEyeWin.DataContext}">
+                <TextBlock>Right Eye</TextBlock>
+                <TextBlock>TopLeft</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>X :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopLeftX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Y :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopLeftY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <TextBlock>TopRight</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>X :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopRightX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Y :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopRightY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <TextBlock>BottomLeft</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>X :</TextBlock>
+                    <Slider Width="200"   Value="{Binding ElementName=stackRight, Path=DataContext.BottomLeftX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Y :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomLeftY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <TextBlock>BottomRight</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>X :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomRightX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Y :</TextBlock>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomRightY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                </StackPanel>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

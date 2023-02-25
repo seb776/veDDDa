@@ -13,6 +13,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
@@ -35,16 +36,21 @@ namespace veDDDa
             get { return _eye; }
             private set { _eye = value; }
         }
+        private MainWindowModel _model {  get { return this.DataContext as MainWindowModel; } }
         private GLControl _winformGLControl;
         private int _program;
         private Size size;
         public MainWindow(EEye eye)
         {
+            this.DataContext = new MainWindowModel();
+            Eye = eye;
             this.Title = $"veDDDa {eye.ToString()} eye";
             size = new Size(800, 600);
             InitializeComponent();
             _winformGLControl = new GLControl();
             _winformGLControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            _winformGLControl.Margin = new System.Windows.Forms.Padding(0);
+            _winformGLControl.Padding = new System.Windows.Forms.Padding(0);
             _winformGLControl.Paint += _winformGLControl_Paint;
             winFormsHost.Child = _winformGLControl;
             //winFormsHost.Width = this.ActualWidth;
@@ -82,13 +88,12 @@ namespace veDDDa
 
         public void UpdateShaderCode(string shader)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                var boilerPlate = File.ReadAllText("./Boilerplate.glsl");
-                var formattedCode = boilerPlate.Replace("__REPLACE__", shader);
-                Build(formattedCode);
-            }));
+
+            var boilerPlate = File.ReadAllText("./Boilerplate.glsl");
+            var formattedCode = boilerPlate.Replace("__REPLACE__", shader);
+            Build(formattedCode);
         }
+
         private static string GetShaderInfoLog(int shader)
         {
             const int MaxLength = 1024 * 10;
@@ -113,7 +118,16 @@ namespace veDDDa
             //GL.
 
             if (compileStatus == 0)
-                throw new InvalidOperationException("unable to compiler fragment shader: " + GetShaderInfoLog(fragmentIndex));
+            {
+                string messageBoxText = "unable to compiler fragment shader: \n" + GetShaderInfoLog(fragmentIndex);
+                string caption = "ShaderError";
+                MessageBoxButton button = MessageBoxButton.OK;
+                MessageBoxImage icon = MessageBoxImage.Warning;
+                MessageBoxResult result;
+
+                result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                //throw new InvalidOperationException("unable to compiler fragment shader: " + GetShaderInfoLog(fragmentIndex));
+            }
 
             _program = GL.CreateProgram();
 
@@ -126,7 +140,16 @@ namespace veDDDa
 
             GL.GetProgram(_program, (GetProgramParameterName)OpenTK.Graphics.OpenGL.All.LinkStatus, out compileStatus);
             if (compileStatus == 0)
-                throw new InvalidOperationException("unable to link program");
+            {
+                string messageBoxText = "unable to link fragment shader";
+                string caption = "ShaderError";
+                MessageBoxButton button = MessageBoxButton.OK;
+                MessageBoxImage icon = MessageBoxImage.Warning;
+                MessageBoxResult result;
+
+                result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                //throw new InvalidOperationException("unable to link program");
+            }
 
             GL.UseProgram(_program);
 
@@ -135,11 +158,40 @@ namespace veDDDa
         }
         public void UpdateUniforms(float time)
         {
+            GL.UseProgram(_program);
             var timeLoc = GL.GetUniformLocation(_program, "time");
             GL.Uniform1(timeLoc, time);
 
             var resolutionLoc = GL.GetUniformLocation(_program, "resolution");
             GL.Uniform2(resolutionLoc, (float)size.Width, (float)size.Height);
+
+            var eyeSepLoc = GL.GetUniformLocation(_program, "EyeDistance");
+            float eyeSep = 0.2f;
+            GL.Uniform1(eyeSepLoc, eyeSep);
+
+            var eyePosLoc = GL.GetUniformLocation(_program, "EyePosition");
+            GL.Uniform1(eyePosLoc, (Eye == EEye.LEFT ? -1.0f : 1.0f));
+
+            var topLeftX = GL.GetUniformLocation(_program, "TopLeftX");
+            GL.Uniform1(topLeftX, _model.TopLeftX);
+            var topLeftY = GL.GetUniformLocation(_program, "TopLeftY");
+            GL.Uniform1(topLeftY, _model.TopLeftY);
+
+            var topRightX = GL.GetUniformLocation(_program, "TopRightX");
+            GL.Uniform1(topRightX, _model.TopRightX);
+            var topRightY = GL.GetUniformLocation(_program, "TopRightY");
+            GL.Uniform1(topRightY, _model.TopRightY);
+
+            var bottomLeftX = GL.GetUniformLocation(_program, "BottomLeftX");
+            GL.Uniform1(bottomLeftX, _model.BottomLeftX);
+            var bottomLeftY = GL.GetUniformLocation(_program, "BottomLeftY");
+            GL.Uniform1(bottomLeftY, _model.BottomLeftY);
+
+            var bottomRightX = GL.GetUniformLocation(_program, "BottomRightX");
+            GL.Uniform1(bottomRightX, _model.BottomRightX);
+            var bottomRightY = GL.GetUniformLocation(_program, "BottomRightY");
+            GL.Uniform1(bottomRightY, _model.BottomRightY);
+
         }
 
         private void Grid_KeyDown(object sender, KeyEventArgs e)

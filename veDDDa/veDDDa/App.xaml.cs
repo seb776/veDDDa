@@ -17,15 +17,17 @@ namespace veDDDa
     {
         public const double FRAMERATE = 60.0;
         public const string SHADER_PATH = @"C:\Users\z0rg\Documents\Projects\Perso\veDDDa\veDDDa\veDDDa\Shader.glsl";
-        private List<MainWindow> _windows;
+        public List<MainWindow> _windows;
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             _windows = new List<MainWindow>();
 
             MainWindow leftEyeWin = new MainWindow(EEye.LEFT);
+            leftEyeWin.Closed += EyeWin_Closed;
             _windows.Add(leftEyeWin);
             leftEyeWin.Show();
             MainWindow rightEyeWin = new MainWindow(EEye.RIGHT);
+            rightEyeWin.Closed += EyeWin_Closed;
             _windows.Add(rightEyeWin);
             rightEyeWin.Show();
 
@@ -48,7 +50,8 @@ namespace veDDDa
                 //_winformGLControl_Paint(null, null);
             };
             timer.Start();
-            var controlWin = new ControlWindow();
+            var controlWin = new ControlWindow(this);
+            controlWin.OnClickNewWindow += ControlWin_OnClickNewWindow;
             controlWin.SetWatchingFile(SHADER_PATH);
             controlWin.Show();
             try
@@ -75,6 +78,23 @@ namespace veDDDa
             _updateShader();
         }
 
+        private void ControlWin_OnClickNewWindow(EEye obj)
+        {
+            if (_windows.Find((el) => { return el.Eye == obj; }) == null)
+            {
+                var win = new MainWindow(obj);
+                win.Closed += EyeWin_Closed;
+                win.Show();
+                _windows.Add(win);
+                _updateShader();
+            }
+        }
+
+        private void EyeWin_Closed(object sender, EventArgs e)
+        {
+            _windows.Remove((MainWindow)sender);
+        }
+
         private void _updateShader()
         {
             var shaderCode = File.ReadAllText(SHADER_PATH);
@@ -87,7 +107,10 @@ namespace veDDDa
         {
             if (e.FullPath == SHADER_PATH)
             {
-                _updateShader();
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    _updateShader();
+                }));
             }
         }
     }
