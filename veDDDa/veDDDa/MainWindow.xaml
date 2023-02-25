@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:veDDDa"
         xmlns:tk="clr-namespace:OpenTK;assembly=OpenTK"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid Background="Red" Margin="0">
+         WindowState="Maximized">
+    <Grid Background="Red" Margin="0" Keyboard.KeyDown="Grid_KeyDown">
         <WindowsFormsHost x:Name="winFormsHost" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="0"/>
     </Grid>
 </Window>

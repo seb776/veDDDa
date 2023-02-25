@@ -40,6 +40,7 @@ namespace veDDDa
         private Size size;
         public MainWindow(EEye eye)
         {
+            this.Title = $"veDDDa {eye.ToString()} eye";
             size = new Size(800, 600);
             InitializeComponent();
             _winformGLControl = new GLControl();
@@ -139,6 +140,34 @@ namespace veDDDa
 
             var resolutionLoc = GL.GetUniformLocation(_program, "resolution");
             GL.Uniform2(resolutionLoc, (float)size.Width, (float)size.Height);
+        }
+
+        private void Grid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F11)
+            {
+                if (this.WindowStyle != WindowStyle.None)
+                {
+                    // hide the window before changing window style
+                    this.Visibility = Visibility.Collapsed;
+                    //this.Topmost = true;
+                    this.WindowStyle = WindowStyle.None;
+                    this.ResizeMode = ResizeMode.NoResize;
+                    // re-show the window after changing style
+                    this.Visibility = Visibility.Visible;
+                    Console.WriteLine("ON");
+                }
+                else
+                {
+                    this.Visibility = Visibility.Collapsed;
+                    //this.Topmost = false;
+                    this.WindowStyle = WindowStyle.SingleBorderWindow;
+                    this.ResizeMode = ResizeMode.CanResize;
+                    this.WindowState = System.Windows.WindowState.Maximized;
+                    this.Visibility = Visibility.Visible;
+                    Console.WriteLine("OFF");
+                }
+            }
         }
     }
 }
