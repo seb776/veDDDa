@@ -68,9 +68,14 @@ float sdSegment( in vec2 p, in vec2 a, in vec2 b )
 
 __REPLACE__
 
+float _sqrrr(vec2 uv, vec2 sz)
+{
+	vec2 l = abs(uv) - sz;
+	return max(l.x, l.y);
+}
 void main()
 {
-	vec2 uv = gl_FragCoord.xy / resolution.xx;
+	vec2 uv = (gl_FragCoord.xy-.5*resolution.xy) / resolution.xx;
 // Define the four corners of the desired deformation
 vec2 corners1[4] = vec2[4](
     vec2(TopLeftX, TopLeftY),
@@ -87,7 +92,7 @@ vec2 deformed_uv = invBilinear(uv, corners1[0], corners1[1], corners1[2], corner
 
     if( max( abs(deformed_uv.x-0.5), abs(deformed_uv.y-0.5))<0.5 )
     {
-        col = rdr(deformed_uv);
+        col = rdr(deformed_uv-.5+ vec2(EyeDistance*.5*EyePosition, 0.));
     }
     vec2 a = corners1[0];
     vec2 b = corners1[1];
@@ -102,6 +107,8 @@ vec2 deformed_uv = invBilinear(uv, corners1[0], corners1[1], corners1[2], corner
 
 	//uv += vec2(EyeDistance*.5*EyePosition, 0.);
 	//vec3 col = rdr(uv);
-
+	float screenLim = _sqrrr(uv, vec2(.5)*resolution.xy / resolution.xx);
+	screenLim = abs(screenLim) - .005;
+	col = mix(col, vec3(0., 0., 1.), 1. - sat(screenLim*resolution.x));
 	fragColor = vec4(col, 1.);
 }

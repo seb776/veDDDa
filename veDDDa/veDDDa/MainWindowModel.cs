@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -16,14 +18,49 @@ namespace veDDDa
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
-    class MainWindowModel : ANotifyPropertyChanged
+    public class MainWindowModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void RaisePropertyChanged([CallerMemberName]string name = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public void SaveData()
+        {
+            var json = JsonConvert.SerializeObject(this);
+            File.WriteAllText(_fileName, json);
+        }
+
+        private string _fileName;
         public MainWindowModel()
         {
-            TopLeftX = 0.2f; TopLeftY = 0.2f;
-            TopRightX = 0.0f; TopRightY = 0.2f;
-            BottomLeftX = 0.0f; BottomLeftY = 0.0f;
-            BottomRightX = 0.2f; BottomRightY = 0.0f;
+
+        }
+        public MainWindowModel(EEye eye)
+        {
+            _fileName = $"Data{eye.ToString()}Eye.json";
+            TopLeftX = 0.5f; TopLeftY = 0.5f;
+            TopRightX = -0.5f; TopRightY = 0.5f;
+            BottomLeftX = -0.5f; BottomLeftY = -0.5f;
+            BottomRightX = 0.5f; BottomRightY = -0.5f;
+            if (File.Exists(_fileName))
+            {
+                var data = File.ReadAllText(_fileName);
+                var newData = JsonConvert.DeserializeObject<MainWindowModel>(data);
+                this.TopLeftX = newData.TopLeftX;
+                this.TopLeftY = newData.TopLeftY;
+
+                this.TopRightX = newData.TopRightX;
+                this.TopRightY = newData.TopRightY;
+
+                this.BottomLeftX = newData.BottomLeftX;
+                this.BottomLeftY = newData.BottomLeftY;
+
+                this.BottomRightX = newData.BottomRightX;
+                this.BottomRightY = newData.BottomRightY;
+                //data
+            }
         }
         private float _topLeftX;
         private float _topLeftY;

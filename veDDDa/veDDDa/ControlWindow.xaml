@@ -6,70 +6,397 @@
         xmlns:local="clr-namespace:veDDDa"
         mc:Ignorable="d"
         Title="ControlWindow">
-    <Grid Background="#FFFF7700">
+    <Window.Resources>
+        <!--Control colors.-->
+        <Color x:Key="WindowColor">#FFE8EDF9</Color>
+        <Color x:Key="ContentAreaColorLight">#FFC5CBF9</Color>
+        <Color x:Key="ContentAreaColorDark">#FF7381F9</Color>
+
+        <Color x:Key="DisabledControlLightColor">#FFE8EDF9</Color>
+        <Color x:Key="DisabledControlDarkColor">#FFC5CBF9</Color>
+        <Color x:Key="DisabledForegroundColor">#FF888888</Color>
+
+        <Color x:Key="SelectedBackgroundColor">#FFC5CBF9</Color>
+        <Color x:Key="SelectedUnfocusedColor">#FFDDDDDD</Color>
+
+        <Color x:Key="ControlLightColor">White</Color>
+        <Color x:Key="ControlMediumColor">#FF7381F9</Color>
+        <Color x:Key="ControlDarkColor">#FF211AA9</Color>
+
+        <Color x:Key="ControlMouseOverColor">#FF3843C4</Color>
+        <Color x:Key="ControlPressedColor">#FF211AA9</Color>
+
+
+        <Color x:Key="GlyphColor">#FF444444</Color>
+        <Color x:Key="GlyphMouseOver">sc#1, 0.004391443, 0.002428215, 0.242281124</Color>
+
+        <!--Border colors-->
+        <Color x:Key="BorderLightColor">#FFCCCCCC</Color>
+        <Color x:Key="BorderMediumColor">#FF888888</Color>
+        <Color x:Key="BorderDarkColor">#FF444444</Color>
+
+        <Color x:Key="PressedBorderLightColor">#FF888888</Color>
+        <Color x:Key="PressedBorderDarkColor">#FF444444</Color>
+
+        <Color x:Key="DisabledBorderLightColor">#FFAAAAAA</Color>
+        <Color x:Key="DisabledBorderDarkColor">#FF888888</Color>
+
+        <Color x:Key="DefaultBorderBrushDarkColor">Black</Color>
+
+        <!--Control-specific resources.-->
+        <Color x:Key="HeaderTopColor">#FFC5CBF9</Color>
+        <Color x:Key="DatagridCurrentCellBorderColor">Black</Color>
+        <Color x:Key="SliderTrackDarkColor">#FFC5CBF9</Color>
+
+        <Color x:Key="NavButtonFrameColor">#FF3843C4</Color>
+
+        <LinearGradientBrush x:Key="MenuPopupBrush"
+                     EndPoint="0.5,1"
+                     StartPoint="0.5,0">
+            <GradientStop Color="{DynamicResource ControlLightColor}"
+                Offset="0" />
+            <GradientStop Color="{DynamicResource ControlMediumColor}"
+                Offset="0.5" />
+            <GradientStop Color="{DynamicResource ControlLightColor}"
+                Offset="1" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="ProgressBarIndicatorAnimatedFill"
+                     StartPoint="0,0"
+                     EndPoint="1,0">
+            <LinearGradientBrush.GradientStops>
+                <GradientStopCollection>
+                    <GradientStop Color="#000000FF"
+                    Offset="0" />
+                    <GradientStop Color="#600000FF"
+                    Offset="0.4" />
+                    <GradientStop Color="#600000FF"
+                    Offset="0.6" />
+                    <GradientStop Color="#000000FF"
+                    Offset="1" />
+                </GradientStopCollection>
+            </LinearGradientBrush.GradientStops>
+        </LinearGradientBrush>
+        <Style x:Key="SliderButtonStyle"
+       TargetType="{x:Type RepeatButton}">
+            <Setter Property="SnapsToDevicePixels"
+          Value="true" />
+            <Setter Property="OverridesDefaultStyle"
+          Value="true" />
+            <Setter Property="IsTabStop"
+          Value="false" />
+            <Setter Property="Focusable"
+          Value="false" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border Background="Transparent" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SliderThumbStyle"
+       TargetType="{x:Type Thumb}">
+            <Setter Property="SnapsToDevicePixels"
+          Value="true" />
+            <Setter Property="OverridesDefaultStyle"
+          Value="true" />
+            <Setter Property="Height"
+          Value="14" />
+            <Setter Property="Width"
+          Value="14" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Ellipse x:Name="Ellipse"
+                 StrokeThickness="1" Fill="Black"  Stretch="Uniform">
+
+                        </Ellipse>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--Template when the orientation of the Slider is Horizontal.-->
+        <ControlTemplate x:Key="HorizontalSlider"
+                 TargetType="{x:Type Slider}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto"
+                     MinHeight="{TemplateBinding MinHeight}" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TickBar x:Name="TopTick"
+             SnapsToDevicePixels="True"
+             Placement="Top"
+             Height="4"
+             Visibility="Collapsed">
+                    <TickBar.Fill>
+                        <SolidColorBrush Color="{DynamicResource GlyphColor}" />
+                    </TickBar.Fill>
+                </TickBar>
+                <Border x:Name="TrackBackground"
+            Margin="0"
+            CornerRadius="2"
+            Height="1"
+            Grid.Row="1"
+             Background="Black">
+                </Border>
+                <Track Grid.Row="1"
+           x:Name="PART_Track">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderButtonStyle}"
+                      Command="Slider.DecreaseLarge" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource SliderThumbStyle}"/>
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderButtonStyle}"
+                      Command="Slider.IncreaseLarge" />
+                    </Track.IncreaseRepeatButton>
+                </Track>
+                <TickBar x:Name="BottomTick"
+             SnapsToDevicePixels="True"
+             Grid.Row="2"
+             Fill="{TemplateBinding Foreground}"
+             Placement="Bottom"
+             Height="4"
+             Visibility="Collapsed" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="TickPlacement"
+             Value="TopLeft">
+                    <Setter TargetName="TopTick"
+              Property="Visibility"
+              Value="Visible" />
+                </Trigger>
+                <Trigger Property="TickPlacement"
+             Value="BottomRight">
+                    <Setter TargetName="BottomTick"
+              Property="Visibility"
+              Value="Visible" />
+                </Trigger>
+                <Trigger Property="TickPlacement"
+             Value="Both">
+                    <Setter TargetName="TopTick"
+              Property="Visibility"
+              Value="Visible" />
+                    <Setter TargetName="BottomTick"
+              Property="Visibility"
+              Value="Visible" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <!--Template when the orientation of the Slider is Vertical.-->
+        <ControlTemplate x:Key="VerticalSlider"
+                 TargetType="{x:Type Slider}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto"
+                        MinWidth="{TemplateBinding MinWidth}" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TickBar x:Name="TopTick"
+             SnapsToDevicePixels="True"
+             Placement="Left"
+             Width="4"
+             Visibility="Collapsed">
+                    <TickBar.Fill>
+                        <SolidColorBrush Color="{DynamicResource GlyphColor}" />
+                    </TickBar.Fill>
+                </TickBar>
+
+                <Border x:Name="TrackBackground"
+            Margin="0"
+            CornerRadius="2"
+            Width="4"
+            Grid.Column="1"
+            BorderThickness="1">
+                    <Border.BorderBrush>
+                        <LinearGradientBrush StartPoint="0,0"
+                             EndPoint="1,0">
+                            <LinearGradientBrush.GradientStops>
+                                <GradientStopCollection>
+                                    <GradientStop Color="{DynamicResource BorderLightColor}"
+                            Offset="0.0" />
+                                    <GradientStop Color="{DynamicResource BorderDarkColor}"
+                            Offset="1.0" />
+                                </GradientStopCollection>
+                            </LinearGradientBrush.GradientStops>
+                        </LinearGradientBrush>
+
+                    </Border.BorderBrush>
+                    <Border.Background>
+                        <LinearGradientBrush EndPoint="1,0"
+                             StartPoint="0.25,0">
+                            <GradientStop Color="{DynamicResource ControlLightColor}"
+                        Offset="0" />
+                            <GradientStop Color="{DynamicResource SliderTrackDarkColor}"
+                        Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+                <Track Grid.Column="1"
+           x:Name="PART_Track">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderButtonStyle}"
+                      Command="Slider.DecreaseLarge" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource SliderThumbStyle}" />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderButtonStyle}"
+                      Command="Slider.IncreaseLarge" />
+                    </Track.IncreaseRepeatButton>
+                </Track>
+                <TickBar x:Name="BottomTick"
+             SnapsToDevicePixels="True"
+             Grid.Column="2"
+             Fill="{TemplateBinding Foreground}"
+             Placement="Right"
+             Width="4"
+             Visibility="Collapsed" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="TickPlacement"
+             Value="TopLeft">
+                    <Setter TargetName="TopTick"
+              Property="Visibility"
+              Value="Visible" />
+                </Trigger>
+                <Trigger Property="TickPlacement"
+             Value="BottomRight">
+                    <Setter TargetName="BottomTick"
+              Property="Visibility"
+              Value="Visible" />
+                </Trigger>
+                <Trigger Property="TickPlacement"
+             Value="Both">
+                    <Setter TargetName="TopTick"
+              Property="Visibility"
+              Value="Visible" />
+                    <Setter TargetName="BottomTick"
+              Property="Visibility"
+              Value="Visible" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style TargetType="{x:Type Slider}">
+            <Setter Property="SnapsToDevicePixels"
+          Value="true" />
+            <Setter Property="OverridesDefaultStyle"
+          Value="true" />
+            <Style.Triggers>
+                <Trigger Property="Orientation"
+             Value="Horizontal">
+                    <Setter Property="MinWidth"
+              Value="104" />
+                    <Setter Property="MinHeight"
+              Value="21" />
+                    <Setter Property="Template"
+              Value="{StaticResource HorizontalSlider}" />
+                </Trigger>
+                <Trigger Property="Orientation"
+             Value="Vertical">
+                    <Setter Property="MinWidth"
+              Value="21" />
+                    <Setter Property="MinHeight"
+              Value="104" />
+                    <Setter Property="Template"
+              Value="{StaticResource VerticalSlider}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#d5c7b5">
         <Grid Margin="20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <UniformGrid Columns="1">
-                <Slider IsSnapToTickEnabled="True" TickFrequency="1" Width="200"></Slider>
-                <TextBlock VerticalAlignment="Center">
+            <WrapPanel Width="200">
+                <WrapPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="Background" Value="#e06348"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border Background="{TemplateBinding Background}" Width="100" Height="100" BorderBrush="{TemplateBinding Foreground}" BorderThickness="1">
+                                        <ContentPresenter Content="{TemplateBinding Content}" TextBlock.Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center" TextBlock.FontWeight="Black"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </WrapPanel.Resources>
+                <Grid Width="200" Height="100"  Background="#23251f">
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" TextWrapping="Wrap">
                     <Run FontWeight="Black">Watching file : </Run>
+                        <LineBreak/>
                     <Run x:Name="textRunFilepath">C:\filepath\shader.glsl</Run>
-                </TextBlock>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Button Width="50">
-                        <TextBlock TextWrapping="Wrap" TextAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown">Open Left Eye</TextBlock>
-                    </Button>
-                    <Button Width="50" Grid.Column="1">
-                        <TextBlock TextWrapping="Wrap" TextAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown_1">Open Right Eye</TextBlock>
-                    </Button>
+                    </TextBlock>
                 </Grid>
+                <Grid Width="200" Height="100" Background="#e06348">
+                    <UniformGrid Columns="1" Margin="10">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom">Eye distance</TextBlock>
+                        <Slider IsSnapToTickEnabled="True" VerticalAlignment="Center" TickFrequency="1" Width="200"></Slider>
+                    </UniformGrid>
+                </Grid>
+
+                <Button>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown">Open Left Eye</TextBlock>
+                </Button>
+                <Button >
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown_1">Open Right Eye</TextBlock>
+                </Button>
                 <TextBlock TextWrapping="Wrap" Foreground="Orange" Background="#606060" Height="100" x:Name="LogsTB"/>
-            </UniformGrid>
+            </WrapPanel>
             <StackPanel Orientation="Vertical" Grid.Column="1" x:Name="stackLeft" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=LeftEyeWin.DataContext}">
                 <TextBlock>Left Eye</TextBlock>
                 <TextBlock>TopLeft</TextBlock>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopLeftX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopLeftX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopLeftY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopLeftY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <TextBlock>TopRight</TextBlock>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopRightX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopRightX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopRightY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopRightY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <TextBlock>BottomLeft</TextBlock>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>X :</TextBlock>
-                    <Slider Width="200"   Value="{Binding ElementName=stackLeft, Path=DataContext.BottomLeftX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"   Value="{Binding ElementName=stackLeft, Path=DataContext.BottomLeftX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomLeftY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomLeftY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <TextBlock>BottomRight</TextBlock>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomRightX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomRightX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomRightY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomRightY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
             </StackPanel>
             <StackPanel Orientation="Vertical" Grid.Column="2" x:Name="stackRight" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=RightEyeWin.DataContext}">
@@ -77,38 +404,38 @@
                 <TextBlock>TopLeft</TextBlock>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopLeftX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopLeftX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopLeftY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopLeftY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <TextBlock>TopRight</TextBlock>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopRightX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopRightX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopRightY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopRightY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <TextBlock>BottomLeft</TextBlock>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>X :</TextBlock>
-                    <Slider Width="200"   Value="{Binding ElementName=stackRight, Path=DataContext.BottomLeftX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"   Value="{Binding ElementName=stackRight, Path=DataContext.BottomLeftX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomLeftY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomLeftY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <TextBlock>BottomRight</TextBlock>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomRightX}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomRightX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomRightY}" Minimum="-2" Maximum="2" TickFrequency="0.05"></Slider>
+                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomRightY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
                 </StackPanel>
             </StackPanel>
         </Grid>

@@ -30,7 +30,16 @@ namespace veDDDa
             rightEyeWin.Closed += EyeWin_Closed;
             _windows.Add(rightEyeWin);
             rightEyeWin.Show();
-
+            DispatcherTimer timerSave = new DispatcherTimer(DispatcherPriority.Send);
+            timerSave.Interval = TimeSpan.FromMilliseconds(1000.0 / 3.0f);
+            timerSave.Tick += (s, _) =>
+            {
+                foreach (var win in _windows)
+                {
+                    win._model.SaveData();
+                }
+            };
+            timerSave.Start();
             DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Send);
             timer.Interval = TimeSpan.FromMilliseconds(1000.0 / FRAMERATE);
             float accTime = 0.0f;

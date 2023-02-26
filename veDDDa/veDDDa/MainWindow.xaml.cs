@@ -36,13 +36,13 @@ namespace veDDDa
             get { return _eye; }
             private set { _eye = value; }
         }
-        private MainWindowModel _model {  get { return this.DataContext as MainWindowModel; } }
+        public MainWindowModel _model {  get { return this.DataContext as MainWindowModel; } }
         private GLControl _winformGLControl;
         private int _program;
         private Size size;
         public MainWindow(EEye eye)
         {
-            this.DataContext = new MainWindowModel();
+            this.DataContext = new MainWindowModel(eye);
             Eye = eye;
             this.Title = $"veDDDa {eye.ToString()} eye";
             size = new Size(800, 600);
@@ -166,7 +166,7 @@ namespace veDDDa
             GL.Uniform2(resolutionLoc, (float)size.Width, (float)size.Height);
 
             var eyeSepLoc = GL.GetUniformLocation(_program, "EyeDistance");
-            float eyeSep = 0.2f;
+            float eyeSep = 0.1f;
             GL.Uniform1(eyeSepLoc, eyeSep);
 
             var eyePosLoc = GL.GetUniformLocation(_program, "EyePosition");
