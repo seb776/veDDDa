@@ -35,15 +35,19 @@ namespace veDDDa
         private string _fileName;
         public MainWindowModel()
         {
-
+            // To avoid circular deserialization with newtonsoft
+        }
+        private void _resetCorners()
+        {
+            TopRightX = 0.5f; TopRightY = 0.5f;
+            TopLeftX = -0.5f; TopLeftY = 0.5f;
+            BottomLeftX = -0.5f; BottomLeftY = -0.5f;
+            BottomRightX = 0.5f; BottomRightY = -0.5f;
         }
         public MainWindowModel(EEye eye)
         {
             _fileName = $"Data{eye.ToString()}Eye.json";
-            TopLeftX = 0.5f; TopLeftY = 0.5f;
-            TopRightX = -0.5f; TopRightY = 0.5f;
-            BottomLeftX = -0.5f; BottomLeftY = -0.5f;
-            BottomRightX = 0.5f; BottomRightY = -0.5f;
+            _resetCorners();
             if (File.Exists(_fileName))
             {
                 var data = File.ReadAllText(_fileName);

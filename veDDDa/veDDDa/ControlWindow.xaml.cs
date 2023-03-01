@@ -24,7 +24,14 @@ namespace veDDDa
         {
             _app = app;
             InitializeComponent();
+            this.Closed += ControlWindow_Closed;
         }
+
+        private void ControlWindow_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
         public MainWindow LeftEyeWin { get { return _app._windows.Find((el) => { return el.Eye == EEye.LEFT; }); } }
         public MainWindow RightEyeWin { get { return _app._windows.Find((el) => { return el.Eye == EEye.RIGHT; }); } }
         public void SetWatchingFile(string file)
@@ -33,14 +40,18 @@ namespace veDDDa
         }
 
         public event Action<EEye> OnClickNewWindow;
+        private void ResetLeft(object sender, RoutedEventArgs e)
+        { }
+        private void ResetRight(object sender, RoutedEventArgs e)
+        { }
 
-        private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void TextBlock_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             if (OnClickNewWindow != null)
                 OnClickNewWindow(EEye.LEFT);
         }
 
-        private void TextBlock_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
+        private void TextBlock_MouseLeftButtonDown_1(object sender, RoutedEventArgs e)
         {
             // Right
             if (OnClickNewWindow != null)

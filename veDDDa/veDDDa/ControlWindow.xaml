@@ -339,24 +339,85 @@
                     </Style>
                 </WrapPanel.Resources>
                 <Grid Width="200" Height="100"  Background="#23251f">
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" TextWrapping="Wrap">
-                    <Run FontWeight="Black">Watching file : </Run>
-                        <LineBreak/>
+                    <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" TextWrapping="Wrap">
+                        <TextBlock.RenderTransform>
+                            <RotateTransform Angle="-90"/>
+                        </TextBlock.RenderTransform>
+                    <Run FontWeight="Black">Watching file</Run>
+                    </TextBlock>
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" TextWrapping="Wrap" Margin="20, 0">
+  
                     <Run x:Name="textRunFilepath">C:\filepath\shader.glsl</Run>
                     </TextBlock>
                 </Grid>
                 <Grid Width="200" Height="100" Background="#e06348">
-                    <UniformGrid Columns="1" Margin="10">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom">Eye distance</TextBlock>
-                        <Slider IsSnapToTickEnabled="True" VerticalAlignment="Center" TickFrequency="1" Width="200"></Slider>
-                    </UniformGrid>
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" TextWrapping="Wrap">
+                        <TextBlock.RenderTransform>
+                            <RotateTransform Angle="-90"/>
+                        </TextBlock.RenderTransform>
+                            Eye distance</TextBlock>
+                    <Slider IsSnapToTickEnabled="True" VerticalAlignment="Center" TickFrequency="1" Margin="50,0"></Slider>
                 </Grid>
 
-                <Button>
-                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown">Open Left Eye</TextBlock>
+                <Button Click="TextBlock_MouseLeftButtonDown" Background="#FF23251F">
+                    <Grid Background="Transparent">
+                        <Rectangle Stretch="UniformToFill" Margin="20">
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="#FFE06348"/>
+                            </Rectangle.Fill>
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="./EyeIcon.png" RenderOptions.BitmapScalingMode="Fant"/>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                    </Grid>
+                    <!--<TextBlock TextWrapping="Wrap" TextAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown">Open Left Eye</TextBlock>-->
                 </Button>
-                <Button >
-                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown_1">Open Right Eye</TextBlock>
+                <Button Click="TextBlock_MouseLeftButtonDown_1">
+                    <Grid Background="Transparent">
+
+                        <Rectangle Stretch="UniformToFill" Margin="20">
+                            <Rectangle.LayoutTransform>
+                                <ScaleTransform ScaleX="-1"/>
+                            </Rectangle.LayoutTransform>
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="Black"/>
+                            </Rectangle.Fill>
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="./EyeIcon.png" RenderOptions.BitmapScalingMode="Fant"/>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                    </Grid>
+                </Button>
+                <Button Click="ResetLeft">
+                    <Grid Background="Transparent">
+
+                        <Rectangle Stretch="UniformToFill" Margin="20">
+                            <Rectangle.LayoutTransform>
+                                <ScaleTransform ScaleX="-1"/>
+                            </Rectangle.LayoutTransform>
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="Black"/>
+                            </Rectangle.Fill>
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="./SquareIcon.png" RenderOptions.BitmapScalingMode="Fant"/>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                        <TextBlock TextWrapping="Wrap" TextAlignment="Center"  VerticalAlignment="Bottom" Foreground="Black">Reset</TextBlock>
+                    </Grid>
+                </Button>
+                <Button Click="ResetRight" Background="#FF23251F">
+                    <Grid Background="Transparent">
+                        <Rectangle Stretch="UniformToFill" Margin="20">
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="#FFE06348"/>
+                            </Rectangle.Fill>
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="./SquareIcon.png" RenderOptions.BitmapScalingMode="Fant"/>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                        <TextBlock TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom" Foreground="#FFE06348">Reset</TextBlock>
+
+                    </Grid>
                 </Button>
                 <TextBlock TextWrapping="Wrap" Foreground="Orange" Background="#606060" Height="100" x:Name="LogsTB"/>
             </WrapPanel>

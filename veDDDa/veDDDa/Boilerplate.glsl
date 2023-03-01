@@ -78,8 +78,8 @@ void main()
 	vec2 uv = (gl_FragCoord.xy-.5*resolution.xy) / resolution.xx;
 // Define the four corners of the desired deformation
 vec2 corners1[4] = vec2[4](
-    vec2(TopLeftX, TopLeftY),
     vec2(TopRightX, TopRightY),
+    vec2(TopLeftX, TopLeftY),
     vec2(BottomLeftX, BottomLeftY),
     vec2(BottomRightX, BottomRightY)
 );
