@@ -173,24 +173,25 @@ namespace veDDDa
             GL.Uniform1(eyePosLoc, (Eye == EEye.LEFT ? -1.0f : 1.0f));
 
             var topLeftX = GL.GetUniformLocation(_program, "TopLeftX");
-            GL.Uniform1(topLeftX, _model.TopLeftX);
+            GL.Uniform1(topLeftX, _model.TopLeft.Left);
             var topLeftY = GL.GetUniformLocation(_program, "TopLeftY");
-            GL.Uniform1(topLeftY, _model.TopLeftY);
+            GL.Uniform1(topLeftY, _model.TopLeft.Top);
 
             var topRightX = GL.GetUniformLocation(_program, "TopRightX");
-            GL.Uniform1(topRightX, _model.TopRightX);
+            GL.Uniform1(topRightX, _model.TopRight.Left);
             var topRightY = GL.GetUniformLocation(_program, "TopRightY");
-            GL.Uniform1(topRightY, _model.TopRightY);
+            GL.Uniform1(topRightY, _model.TopRight.Top);
 
             var bottomLeftX = GL.GetUniformLocation(_program, "BottomLeftX");
-            GL.Uniform1(bottomLeftX, _model.BottomLeftX);
+            GL.Uniform1(bottomLeftX, _model.BottomLeft.Left);
             var bottomLeftY = GL.GetUniformLocation(_program, "BottomLeftY");
-            GL.Uniform1(bottomLeftY, _model.BottomLeftY);
+            GL.Uniform1(bottomLeftY, _model.BottomLeft.Top);
 
             var bottomRightX = GL.GetUniformLocation(_program, "BottomRightX");
-            GL.Uniform1(bottomRightX, _model.BottomRightX);
+            GL.Uniform1(bottomRightX, _model.BottomRight.Left);
             var bottomRightY = GL.GetUniformLocation(_program, "BottomRightY");
-            GL.Uniform1(bottomRightY, _model.BottomRightY);
+            GL.Uniform1(bottomRightY, _model.BottomRight.Top);
+
 
         }
 

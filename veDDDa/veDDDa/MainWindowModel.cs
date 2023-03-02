@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace veDDDa
 {
@@ -39,10 +40,10 @@ namespace veDDDa
         }
         private void _resetCorners()
         {
-            TopRightX = 0.5f; TopRightY = 0.5f;
-            TopLeftX = -0.5f; TopLeftY = 0.5f;
-            BottomLeftX = -0.5f; BottomLeftY = -0.5f;
-            BottomRightX = 0.5f; BottomRightY = -0.5f;
+            TopRight = new Thickness(0.5f, 0.5f, 0f, 0f);
+            TopLeft = new Thickness(-0.5f, 0.5f, 0f, 0f);
+            BottomLeft = new Thickness(-0.5f, -0.5f, 0f, 0f);
+            BottomRight = new Thickness(0.5f, -0.5f, 0f, 0f);
         }
         public MainWindowModel(EEye eye)
         {
@@ -52,78 +53,44 @@ namespace veDDDa
             {
                 var data = File.ReadAllText(_fileName);
                 var newData = JsonConvert.DeserializeObject<MainWindowModel>(data);
-                this.TopLeftX = newData.TopLeftX;
-                this.TopLeftY = newData.TopLeftY;
+                this.TopLeft = newData.TopLeft;
+                this.TopRight = newData.TopRight;
+                this.BottomLeft = newData.BottomLeft;
+                this.BottomRight = newData.BottomRight;
 
-                this.TopRightX = newData.TopRightX;
-                this.TopRightY = newData.TopRightY;
-
-                this.BottomLeftX = newData.BottomLeftX;
-                this.BottomLeftY = newData.BottomLeftY;
-
-                this.BottomRightX = newData.BottomRightX;
-                this.BottomRightY = newData.BottomRightY;
                 //data
             }
         }
-        private float _topLeftX;
-        private float _topLeftY;
+        private Thickness _topLeft;
 
-        public float TopLeftX
+        public Thickness TopLeft
         {
-            get { return _topLeftX; }
-            set { _topLeftX = value; RaisePropertyChanged(); }
+            get { return _topLeft; }
+            set { _topLeft = value; RaisePropertyChanged(); }
         }
 
-        public float TopLeftY
+        private Thickness _topRight;
+
+        public Thickness TopRight
         {
-            get { return _topLeftY; }
-            set { _topLeftY = value; RaisePropertyChanged(); }
+            get { return _topRight; }
+            set { _topRight = value; RaisePropertyChanged(); }
         }
 
-        private float _topRightX;
-        private float _topRightY;
+        private Thickness _bottomLeft;
 
-        public float TopRightX
+        public Thickness BottomLeft
         {
-            get { return _topRightX; }
-            set { _topRightX = value; RaisePropertyChanged(); }
+            get { return _bottomLeft; }
+            set { _bottomLeft = value; RaisePropertyChanged(); }
         }
 
-        public float TopRightY
+        private Thickness _bottomRight;
+
+        public Thickness BottomRight
         {
-            get { return _topRightY; }
-            set { _topRightY = value; RaisePropertyChanged(); }
-        }
-
-        private float _bottomLeftX;
-        private float _bottomLeftY;
-
-        public float BottomLeftX
-        {
-            get { return _bottomLeftX; }
-            set { _bottomLeftX = value; RaisePropertyChanged(); }
-        }
-
-        public float BottomLeftY
-        {
-            get { return _bottomLeftY; }
-            set { _bottomLeftY = value; RaisePropertyChanged(); }
-        }
-
-        private float _bottomRightX;
-        private float _bottomRightY;
-
-        public float BottomRightX
-        {
-            get { return _bottomRightX; }
-            set { _bottomRightX = value; RaisePropertyChanged(); }
-        }
-
-        public float BottomRightY
-        {
-            get { return _bottomRightY; }
-            set { _bottomRightY = value; RaisePropertyChanged(); }
+            get { return _bottomRight; }
+            set { _bottomRight = value; RaisePropertyChanged(); }
         }
 
 

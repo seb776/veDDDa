@@ -106,6 +106,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="Amazing Views.ttf" />
     <None Include="Boilerplate.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

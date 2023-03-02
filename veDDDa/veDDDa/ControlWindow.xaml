@@ -316,13 +316,20 @@
         </Style>
     </Window.Resources>
     <Grid Background="#d5c7b5">
-        <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid Height="100" Background="#e06348">
+            <TextBlock FontFamily="./#Amazing Views" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="115">z0rg veDDDa</TextBlock>
+        </Grid>
+        <Grid Margin="20,0" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <WrapPanel Width="200">
+            <WrapPanel Width="200" Grid.Column="1">
                 <WrapPanel.Resources>
                     <Style TargetType="Button">
                         <Setter Property="Foreground" Value="Black"/>
@@ -350,7 +357,7 @@
                     <Run x:Name="textRunFilepath">C:\filepath\shader.glsl</Run>
                     </TextBlock>
                 </Grid>
-                <Grid Width="200" Height="100" Background="#e06348">
+                <Grid Width="200" Height="100" Background="#e06348" >
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" TextWrapping="Wrap">
                         <TextBlock.RenderTransform>
                             <RotateTransform Angle="-90"/>
@@ -421,84 +428,49 @@
                 </Button>
                 <TextBlock TextWrapping="Wrap" Foreground="Orange" Background="#606060" Height="100" x:Name="LogsTB"/>
             </WrapPanel>
-            <StackPanel Orientation="Vertical" Grid.Column="1" x:Name="stackLeft" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=LeftEyeWin.DataContext}">
-                <TextBlock>Left Eye</TextBlock>
-                <TextBlock>TopLeft</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopLeftX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopLeftY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <TextBlock>TopRight</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopRightX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.TopRightY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <TextBlock>BottomLeft</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>X :</TextBlock>
-                    <Slider Width="200"   Value="{Binding ElementName=stackLeft, Path=DataContext.BottomLeftX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomLeftY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <TextBlock>BottomRight</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomRightX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackLeft, Path=DataContext.BottomRightY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Vertical" Grid.Column="2" x:Name="stackRight" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=RightEyeWin.DataContext}">
-                <TextBlock>Right Eye</TextBlock>
-                <TextBlock>TopLeft</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopLeftX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopLeftY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <TextBlock>TopRight</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopRightX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.TopRightY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <TextBlock>BottomLeft</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>X :</TextBlock>
-                    <Slider Width="200"   Value="{Binding ElementName=stackRight, Path=DataContext.BottomLeftX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomLeftY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <TextBlock>BottomRight</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>X :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomRightX}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Y :</TextBlock>
-                    <Slider Width="200"  Value="{Binding ElementName=stackRight, Path=DataContext.BottomRightY}" Minimum="-0.5" Maximum="0.5" TickFrequency="0.01"></Slider>
-                </StackPanel>
-            </StackPanel>
+            <Grid Grid.Column="0"   Height="150" Width="200"  VerticalAlignment="Top" x:Name="parentLeft" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=LeftEyeWin.DataContext}">
+                <Grid.Background>
+                    <VisualBrush TileMode="Tile" Viewport="0,0,15,15" ViewportUnits="Absolute" Viewbox="0,0,15,15" ViewboxUnits="Absolute">
+                        <VisualBrush.Visual>
+                            <Grid Background="#23251f">
+                                <Path Data="M 0 0 L 15 0" Stroke="Gray" />
+                                <Path Data="M 0 0 L 0 15" Stroke="Gray" />
+                            </Grid>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Grid.Background>
+                <Ellipse Margin="{Binding ElementName=parentLeft, Path=DataContext.TopLeft}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
+                <Ellipse Margin="{Binding ElementName=parentLeft, Path=DataContext.TopRight}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
+                <Ellipse Margin="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
+                <Ellipse Margin="{Binding ElementName=parentLeft, Path=DataContext.BottomRight}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
+                <Line X1="{Binding ElementName=parentLeft, Path=DataContext.TopLeft.Left}" Y1="{Binding ElementName=parentLeft, Path=DataContext.TopLeft.Top}" X2="{Binding ElementName=parentLeft, Path=DataContext.TopRight.Left}" Y2="{Binding ElementName=parentLeft, Path=DataContext.TopRight.Top}" HorizontalAlignment="Left" VerticalAlignment="Top" StrokeThickness="2" Stroke="#e06348"/>
+                <Line X1="{Binding ElementName=parentLeft, Path=DataContext.TopLeft.Left}" Y1="{Binding ElementName=parentLeft, Path=DataContext.TopLeft.Top}" X2="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft.Left}" Y2="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft.Top}" HorizontalAlignment="Left" VerticalAlignment="Top" StrokeThickness="2" Stroke="#e06348"/>
+                <Line X1="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft.Left}" Y1="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft.Top}" X2="{Binding ElementName=parentLeft, Path=DataContext.BottomRight.Left}" Y2="{Binding ElementName=parentLeft, Path=DataContext.BottomRight.Top}" HorizontalAlignment="Left" VerticalAlignment="Top" StrokeThickness="2" Stroke="#e06348"/>
+                <Line X1="{Binding ElementName=parentLeft, Path=DataContext.TopRight.Left}" Y1="{Binding ElementName=parentLeft, Path=DataContext.TopRight.Top}" X2="{Binding ElementName=parentLeft, Path=DataContext.BottomRight.Left}" Y2="{Binding ElementName=parentLeft, Path=DataContext.BottomRight.Top}" HorizontalAlignment="Left" VerticalAlignment="Top" StrokeThickness="2" Stroke="#e06348"/>
+
+            </Grid>
+
+            <Grid Grid.Column="2"   Height="150" Width="200"  VerticalAlignment="Top"   x:Name="parentRight" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=LeftEyeWin.DataContext}">
+                <Grid.Background>
+                    <VisualBrush TileMode="Tile" Viewport="0,0,15,15" ViewportUnits="Absolute" Viewbox="0,0,15,15" ViewboxUnits="Absolute">
+                        <VisualBrush.Visual>
+                            <Grid Background="#23251f">
+                                <Path Data="M 0 0 L 15 0" Stroke="Gray" />
+                                <Path Data="M 0 0 L 0 15" Stroke="Gray" />
+                            </Grid>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Grid.Background>
+                <Ellipse Margin="{Binding ElementName=parentRight, Path=DataContext.TopLeft}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
+                <Ellipse Margin="{Binding ElementName=parentRight, Path=DataContext.TopRight}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
+                <Ellipse Margin="{Binding ElementName=parentRight, Path=DataContext.BottomLeft}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
+                <Ellipse Margin="{Binding ElementName=parentRight, Path=DataContext.BottomRight}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
+                <Line X1="{Binding ElementName=parentRight, Path=DataContext.TopLeft.Left}" Y1="{Binding ElementName=parentLeft, Path=DataContext.TopLeft.Top}" X2="{Binding ElementName=parentLeft, Path=DataContext.TopRight.Left}" Y2="{Binding ElementName=parentLeft, Path=DataContext.TopRight.Top}" HorizontalAlignment="Left" VerticalAlignment="Top" StrokeThickness="2" Stroke="#e06348"/>
+                <Line X1="{Binding ElementName=parentRight, Path=DataContext.TopLeft.Left}" Y1="{Binding ElementName=parentLeft, Path=DataContext.TopLeft.Top}" X2="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft.Left}" Y2="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft.Top}" HorizontalAlignment="Left" VerticalAlignment="Top" StrokeThickness="2" Stroke="#e06348"/>
+                <Line X1="{Binding ElementName=parentRight, Path=DataContext.BottomLeft.Left}" Y1="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft.Top}" X2="{Binding ElementName=parentLeft, Path=DataContext.BottomRight.Left}" Y2="{Binding ElementName=parentLeft, Path=DataContext.BottomRight.Top}" HorizontalAlignment="Left" VerticalAlignment="Top" StrokeThickness="2" Stroke="#e06348"/>
+                <Line X1="{Binding ElementName=parentRight, Path=DataContext.TopRight.Left}" Y1="{Binding ElementName=parentLeft, Path=DataContext.TopRight.Top}" X2="{Binding ElementName=parentLeft, Path=DataContext.BottomRight.Left}" Y2="{Binding ElementName=parentLeft, Path=DataContext.BottomRight.Top}" HorizontalAlignment="Left" VerticalAlignment="Top" StrokeThickness="2" Stroke="#e06348"/>
+
+            </Grid>
         </Grid>
     </Grid>
 </Window>
