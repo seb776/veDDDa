@@ -22,6 +22,10 @@ namespace veDDDa
         private App _app;
         public ControlWindow(App app)
         {
+
+
+            _isDragging = false;
+            _draggedEllipse = null;
             _app = app;
             InitializeComponent();
             this.Closed += ControlWindow_Closed;
@@ -41,9 +45,15 @@ namespace veDDDa
 
         public event Action<EEye> OnClickNewWindow;
         private void ResetLeft(object sender, RoutedEventArgs e)
-        { }
+        {
+            if (LeftEyeWin != null)
+                LeftEyeWin._model._resetCorners();
+        }
         private void ResetRight(object sender, RoutedEventArgs e)
-        { }
+        {
+            if (RightEyeWin != null)
+                RightEyeWin._model._resetCorners();
+        }
 
         private void TextBlock_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
@@ -56,6 +66,48 @@ namespace veDDDa
             // Right
             if (OnClickNewWindow != null)
                 OnClickNewWindow(EEye.RIGHT);
+        }
+
+        private void TextBlock_MouseLeftButtonDown_2(object sender, MouseButtonEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
+
+        private bool _isDragging;
+        private Ellipse _draggedEllipse;
+
+
+        private void Ellipse_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _isDragging = true;
+            _draggedEllipse = (Ellipse)sender;
+        }
+
+        private void parentLeft_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDragging && _draggedEllipse != null)
+            {
+                var position = e.GetPosition((Grid)sender);
+
+                var thickness = _draggedEllipse.Margin;
+
+                thickness.Left = position.X - (_draggedEllipse.ActualWidth / 2);
+                thickness.Top = position.Y - (_draggedEllipse.ActualHeight / 2);
+
+                _draggedEllipse.Margin = thickness;
+            }
+        }
+
+        private void parentLeft_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _isDragging = false;
+            _draggedEllipse = null;
         }
     }
 }

@@ -5,8 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:veDDDa"
         mc:Ignorable="d"
-        Title="ControlWindow">
+        Title="ControlWindow" Topmost="true"
+        WindowStyle="None"
+    WindowStartupLocation="CenterScreen" AllowsTransparency="True" Background="Transparent"
+        Width="900">
     <Window.Resources>
+        <local:RelativePositionConverter x:Key="relativePosConvert"/>
         <!--Control colors.-->
         <Color x:Key="WindowColor">#FFE8EDF9</Color>
         <Color x:Key="ContentAreaColorLight">#FFC5CBF9</Color>
@@ -315,15 +319,20 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Grid Background="#d5c7b5">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Grid Height="100" Background="#e06348">
-            <TextBlock FontFamily="./#Amazing Views" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="115">z0rg veDDDa</TextBlock>
+        <Grid Height="100" Background="#e06348" MouseDown="Grid_MouseDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock FontFamily="./#Amazing Views" HorizontalAlignment="Left" Margin="20,0" VerticalAlignment="Center" FontSize="115">z0rg veDDDa</TextBlock>
+            <TextBlock FontFamily="./#Amazing Views" HorizontalAlignment="Center" Margin="20,0" VerticalAlignment="Center" FontSize="115" Grid.Column="1" Background="Transparent" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown_2">X</TextBlock>
         </Grid>
-        <Grid Margin="20,0" Grid.Row="1">
+        <Grid Margin="20,0" Grid.Row="1" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
@@ -428,7 +437,8 @@
                 </Button>
                 <TextBlock TextWrapping="Wrap" Foreground="Orange" Background="#606060" Height="100" x:Name="LogsTB"/>
             </WrapPanel>
-            <Grid Grid.Column="0"   Height="150" Width="200"  VerticalAlignment="Top" x:Name="parentLeft" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=LeftEyeWin.DataContext}">
+            <Grid DataContext="{Binding ElementName=parentLeft}" x:Name="proxyParentLeft"></Grid>
+            <Grid Grid.Column="0"   Height="150" Width="200"  VerticalAlignment="Top" x:Name="parentLeft" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=LeftEyeWin.DataContext}" MouseMove="parentLeft_MouseMove" MouseUp="parentLeft_MouseUp">
                 <Grid.Background>
                     <VisualBrush TileMode="Tile" Viewport="0,0,15,15" ViewportUnits="Absolute" Viewbox="0,0,15,15" ViewboxUnits="Absolute">
                         <VisualBrush.Visual>
@@ -439,10 +449,11 @@
                         </VisualBrush.Visual>
                     </VisualBrush>
                 </Grid.Background>
-                <Ellipse Margin="{Binding ElementName=parentLeft, Path=DataContext.TopLeft}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
-                <Ellipse Margin="{Binding ElementName=parentLeft, Path=DataContext.TopRight}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
-                <Ellipse Margin="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
-                <Ellipse Margin="{Binding ElementName=parentLeft, Path=DataContext.BottomRight}" Stretch="Uniform" Width="20" Fill="#e06348" HorizontalAlignment="Left"/>
+                
+                <Ellipse Margin="{Binding Mode=TwoWay, ElementName=parentLeft, Path=DataContext.TopLeft, Converter={StaticResource relativePosConvert}, ConverterParameter={x:Reference Name=proxyParentLeft}}" Stretch="Uniform" Width="20" Height="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Width}" Fill="Red" HorizontalAlignment="Left" VerticalAlignment="Top" MouseLeftButtonDown="Ellipse_MouseLeftButtonDown"/>
+                <Ellipse Margin="{Binding  Mode=TwoWay,ElementName=parentLeft, Path=DataContext.TopRight, Converter={StaticResource relativePosConvert}, ConverterParameter={x:Reference Name=proxyParentLeft}}" Stretch="Uniform" Width="20" Height="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Width}" Fill="#e06348" HorizontalAlignment="Left" VerticalAlignment="Top"  MouseLeftButtonDown="Ellipse_MouseLeftButtonDown"/>
+                <Ellipse Margin="{Binding  Mode=TwoWay,ElementName=parentLeft, Path=DataContext.BottomLeft, Converter={StaticResource relativePosConvert}, ConverterParameter={x:Reference Name=proxyParentLeft}}" Stretch="Uniform" Width="20" Height="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Width}" Fill="#e06348" HorizontalAlignment="Left" VerticalAlignment="Top" MouseLeftButtonDown="Ellipse_MouseLeftButtonDown"/>
+                <Ellipse Margin="{Binding  Mode=TwoWay,ElementName=parentLeft, Path=DataContext.BottomRight, Converter={StaticResource relativePosConvert}, ConverterParameter={x:Reference Name=proxyParentLeft}}" Stretch="Uniform" Width="20" Height="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Width}" Fill="#e06348" HorizontalAlignment="Left" VerticalAlignment="Top" MouseLeftButtonDown="Ellipse_MouseLeftButtonDown"/>
                 <Line X1="{Binding ElementName=parentLeft, Path=DataContext.TopLeft.Left}" Y1="{Binding ElementName=parentLeft, Path=DataContext.TopLeft.Top}" X2="{Binding ElementName=parentLeft, Path=DataContext.TopRight.Left}" Y2="{Binding ElementName=parentLeft, Path=DataContext.TopRight.Top}" HorizontalAlignment="Left" VerticalAlignment="Top" StrokeThickness="2" Stroke="#e06348"/>
                 <Line X1="{Binding ElementName=parentLeft, Path=DataContext.TopLeft.Left}" Y1="{Binding ElementName=parentLeft, Path=DataContext.TopLeft.Top}" X2="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft.Left}" Y2="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft.Top}" HorizontalAlignment="Left" VerticalAlignment="Top" StrokeThickness="2" Stroke="#e06348"/>
                 <Line X1="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft.Left}" Y1="{Binding ElementName=parentLeft, Path=DataContext.BottomLeft.Top}" X2="{Binding ElementName=parentLeft, Path=DataContext.BottomRight.Left}" Y2="{Binding ElementName=parentLeft, Path=DataContext.BottomRight.Top}" HorizontalAlignment="Left" VerticalAlignment="Top" StrokeThickness="2" Stroke="#e06348"/>

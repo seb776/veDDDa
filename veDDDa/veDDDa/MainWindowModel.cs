@@ -38,7 +38,7 @@ namespace veDDDa
         {
             // To avoid circular deserialization with newtonsoft
         }
-        private void _resetCorners()
+        public void _resetCorners()
         {
             TopRight = new Thickness(0.5f, 0.5f, 0f, 0f);
             TopLeft = new Thickness(-0.5f, 0.5f, 0f, 0f);
