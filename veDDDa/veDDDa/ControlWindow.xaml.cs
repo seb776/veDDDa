@@ -93,12 +93,12 @@ namespace veDDDa
         {
             if (_isDragging && _draggedEllipse != null)
             {
-                var position = e.GetPosition((Grid)sender);
+                var position = e.GetPosition((Canvas)sender);
 
                 var thickness = _draggedEllipse.Margin;
 
-                thickness.Left = position.X - (_draggedEllipse.ActualWidth / 2);
-                thickness.Top = position.Y - (_draggedEllipse.ActualHeight / 2);
+                thickness.Left = position.X;// - (_draggedEllipse.ActualWidth / 2);
+                thickness.Top = position.Y;// - (_draggedEllipse.ActualHeight / 2);
 
                 _draggedEllipse.Margin = thickness;
             }

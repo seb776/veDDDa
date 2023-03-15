@@ -106,10 +106,21 @@ namespace veDDDa
 
         private void _updateShader()
         {
-            var shaderCode = File.ReadAllText(SHADER_PATH);
-            foreach (var win in _windows)
+            bool loaded = false;
+
+            while (!loaded)
             {
-                win.UpdateShaderCode(shaderCode);
+                try
+                {
+
+                    var shaderCode = File.ReadAllText(SHADER_PATH);
+                    foreach (var win in _windows)
+                    {
+                        win.UpdateShaderCode(shaderCode);
+                    }
+                    loaded = true;
+                }
+                catch (Exception e) { }
             }
         }
         private void Watcher_Changed(object sender, FileSystemEventArgs e)

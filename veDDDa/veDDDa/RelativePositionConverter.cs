@@ -12,10 +12,10 @@ namespace veDDDa
 {
     public class RelativePositionConverter : IValueConverter
     {
-        private const float SCALING = 0.5f;
+        private const float SCALING = 1.0f;
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var parentGrid = (Grid)(((Grid)parameter).DataContext);
+            var parentGrid = (Canvas)(((Grid)parameter).DataContext);
             var cur = (Thickness)value;
             double center = 0.5;
             double left = cur.Left + center;
@@ -27,7 +27,7 @@ namespace veDDDa
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var parentGrid = (Grid)(((Grid)parameter).DataContext);
+            var parentGrid = (Canvas)(((Grid)parameter).DataContext);
             var cur = (Thickness)value;
             double center = 0.5;
             double left = cur.Left;
