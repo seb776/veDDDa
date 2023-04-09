@@ -180,7 +180,7 @@ namespace veDDDa
             var topRightX = GL.GetUniformLocation(_program, "TopRightX");
             GL.Uniform1(topRightX, (float)_model.TopRight.Left);
             var topRightY = GL.GetUniformLocation(_program, "TopRightY");
-            GL.Uniform1(topRightY, _model.TopRight.Top);
+            GL.Uniform1(topRightY, (float)_model.TopRight.Top);
 
             var bottomLeftX = GL.GetUniformLocation(_program, "BottomLeftX");
             GL.Uniform1(bottomLeftX, (float)_model.BottomLeft.Left);
