@@ -355,10 +355,9 @@
                                 ZEM LOGZ
             </TextBlock>
             <ScrollViewer x:Name="LogsScroll" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" Grid.Column="1" Margin="20,0,0,0">
-                <ListView BorderThickness="0" Background="Transparent" ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=Logs}">
+                <ListView BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Transparent" ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=Logs}">
                     <ListView.ItemTemplate>
                         <ItemContainerTemplate>
-
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto"/>
