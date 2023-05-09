@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,16 +15,23 @@ using System.Windows.Shapes;
 
 namespace veDDDa
 {
+    public class LogInfo
+    {
+        public ELogLevel LogLevel { get; set; }
+        public string Message { get; set; }
+    }
     /// <summary>
     /// Interaction logic for ControlWindow.xaml
     /// </summary>
     public partial class ControlWindow : Window
     {
         private App _app;
+        public ObservableCollection<LogInfo> Logs { get; set; }
+
         public ControlWindow(App app)
         {
 
-
+            Logs = new ObservableCollection<LogInfo>();
             _isDragging = false;
             _draggedEllipse = null;
             _app = app;

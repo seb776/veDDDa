@@ -12,6 +12,7 @@
     <Window.Resources>
         <TranslateTransform x:Key="EllipseCenterTr" X="-10" Y="-10"/>
         <local:RelativePositionConverter x:Key="relativePosConvert"/>
+        <local:LogToColorConverter x:Key="LogToColorConvert"/>
         <!--Control colors.-->
         <Color x:Key="WindowColor">#FFE8EDF9</Color>
         <Color x:Key="ContentAreaColorLight">#FFC5CBF9</Color>
@@ -324,6 +325,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid Height="100" Background="#e06348" MouseDown="Grid_MouseDown">
             <Grid.ColumnDefinitions>
@@ -333,7 +335,44 @@
             <TextBlock FontFamily="./#Amazing Views" HorizontalAlignment="Left" Margin="20,0" VerticalAlignment="Center" FontSize="115">veDDDa 3000</TextBlock>
             <TextBlock FontFamily="./#Amazing Views" HorizontalAlignment="Center" Margin="20,0" VerticalAlignment="Center" FontSize="115" Grid.Column="1" Background="Transparent" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown_2">X</TextBlock>
         </Grid>
-        <Grid Margin="20,0" Grid.Row="1" HorizontalAlignment="Center">
+        <Grid Width="800" Height="200" Grid.Row="1" Background="#FF23251F" Opacity="0.5" HorizontalAlignment="Right" >
+            <Grid.Resources>
+                <Style TargetType="ScrollBar">
+                    <Setter Property="Background" Value="Black"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Style>
+            </Grid.Resources>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" TextWrapping="Wrap" Grid.Column="0" Foreground="#e06348">
+                <TextBlock.RenderTransform>
+                    <RotateTransform Angle="-90"/>
+                </TextBlock.RenderTransform>
+                                ZEM LOGZ
+            </TextBlock>
+            <ScrollViewer x:Name="LogsScroll" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" Grid.Column="1" Margin="20,0,0,0">
+                <ListView BorderThickness="0" Background="Transparent" ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=Logs}">
+                    <ListView.ItemTemplate>
+                        <ItemContainerTemplate>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Message}" FontSize="20" TextWrapping="Wrap" Foreground="{Binding LogLevel, Converter={StaticResource LogToColorConvert}}"/>
+                            </Grid>
+                        </ItemContainerTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+
+        </Grid>
+        <Grid Margin="20,0" Grid.Row="2" HorizontalAlignment="Right" Opacity="0.5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
@@ -481,5 +520,6 @@
 
             </Canvas>
         </Grid>
+
     </Grid>
 </Window>

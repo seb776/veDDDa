@@ -19,6 +19,13 @@ using System.Windows.Shapes;
 
 namespace veDDDa
 {
+    public enum ELogLevel
+    {
+        INFO = 0,
+        WARNING = 1,
+        ERROR = 2
+    }
+
     public enum EEye
     {
         LEFT,
@@ -36,10 +43,12 @@ namespace veDDDa
             get { return _eye; }
             private set { _eye = value; }
         }
+        public event Action<ELogLevel, string> OnInfo;
         public MainWindowModel _model {  get { return this.DataContext as MainWindowModel; } }
         private GLControl _winformGLControl;
         private int _program;
         private Size size;
+        private string _lastWorkingCode;
         public MainWindow(EEye eye)
         {
             this.DataContext = new MainWindowModel(eye);
@@ -91,7 +100,8 @@ namespace veDDDa
 
             var boilerPlate = File.ReadAllText("./Boilerplate.glsl");
             var formattedCode = boilerPlate.Replace("__REPLACE__", shader);
-            Build(formattedCode);
+            if (!Build(formattedCode))
+                Build(_lastWorkingCode);
         }
 
         private static string GetShaderInfoLog(int shader)
@@ -104,7 +114,7 @@ namespace veDDDa
 
             return (infoLog.ToString());
         }
-        public void Build(string code)
+        public bool Build(string code)
         {
             //_winformGLControl.MakeCurrent();
             int fragmentIndex = 0;
@@ -125,7 +135,10 @@ namespace veDDDa
                 MessageBoxImage icon = MessageBoxImage.Warning;
                 MessageBoxResult result;
 
-                result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                if (OnInfo != null)
+                    OnInfo(ELogLevel.ERROR, messageBoxText);
+                
+                //result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
                 //throw new InvalidOperationException("unable to compiler fragment shader: " + GetShaderInfoLog(fragmentIndex));
             }
 
@@ -137,8 +150,8 @@ namespace veDDDa
             //GL.GetProgram(0, ProgramProperty.ActiveUniforms, arr);
 
             GL.LinkProgram(_program);
-
-            GL.GetProgram(_program, (GetProgramParameterName)OpenTK.Graphics.OpenGL.All.LinkStatus, out compileStatus);
+            int linkStatus = -1;
+            GL.GetProgram(_program, (GetProgramParameterName)OpenTK.Graphics.OpenGL.All.LinkStatus, out linkStatus);
             if (compileStatus == 0)
             {
                 string messageBoxText = "unable to link fragment shader";
@@ -147,12 +160,20 @@ namespace veDDDa
                 MessageBoxImage icon = MessageBoxImage.Warning;
                 MessageBoxResult result;
 
-                result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                if (OnInfo != null)
+                    OnInfo(ELogLevel.ERROR, messageBoxText);
+                //result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
                 //throw new InvalidOperationException("unable to link program");
             }
 
+            if (compileStatus != 0 && linkStatus != 0)
+            {
+                if (OnInfo != null)
+                    OnInfo(ELogLevel.INFO, "Successfully compiled shader");
+                _lastWorkingCode = code;
+            }
             GL.UseProgram(_program);
-
+            return !(compileStatus == 0 || linkStatus == 0);
             //_textureALocation = GL.GetUniformLocation(_program, "textureA");
 
         }

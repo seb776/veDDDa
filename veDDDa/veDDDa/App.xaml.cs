@@ -18,11 +18,13 @@ namespace veDDDa
         public const double FRAMERATE = 60.0;
         public const string SHADER_PATH = @".\Shader.glsl";
         public List<MainWindow> _windows;
+        public ControlWindow _controlWindow;
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             _windows = new List<MainWindow>();
 
             MainWindow leftEyeWin = new MainWindow(EEye.LEFT);
+            leftEyeWin.OnInfo += LeftEyeWin_OnInfo;
             leftEyeWin.Closed += EyeWin_Closed;
             _windows.Add(leftEyeWin);
             leftEyeWin.Show();
@@ -60,6 +62,7 @@ namespace veDDDa
             };
             timer.Start();
             var controlWin = new ControlWindow(this);
+            _controlWindow = controlWin;
             controlWin.OnClickNewWindow += ControlWin_OnClickNewWindow;
             controlWin.SetWatchingFile(SHADER_PATH);
             controlWin.Show();
@@ -85,6 +88,17 @@ namespace veDDDa
                 Console.WriteLine(ex.ToString());
             }
             _updateShader();
+        }
+
+        private void LeftEyeWin_OnInfo(ELogLevel arg1, string arg2)
+        {
+            var logInfo = new LogInfo();
+            logInfo.LogLevel = arg1;
+            logInfo.Message = $"[{DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")}] {arg2}";
+            if (_controlWindow.Logs.Count > 100)
+                _controlWindow.Logs.RemoveAt(0);
+            _controlWindow.Logs.Add(logInfo);
+            _controlWindow.LogsScroll.ScrollToBottom();
         }
 
         private void ControlWin_OnClickNewWindow(EEye obj)
