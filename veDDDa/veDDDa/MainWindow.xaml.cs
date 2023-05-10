@@ -97,10 +97,14 @@ namespace veDDDa
 
         public void UpdateShaderCode(string shader)
         {
-
+            StringBuilder sb = new StringBuilder();
             var boilerPlate = File.ReadAllText("./Boilerplate.glsl");
-            var formattedCode = boilerPlate.Replace("__REPLACE__", shader);
-            if (!Build(formattedCode))
+
+            sb.AppendLine(boilerPlate);
+            sb.AppendLine(shader);
+
+            var formattedCode = sb.ToString();
+            if (!Build(formattedCode) && _lastWorkingCode != null)
                 Build(_lastWorkingCode);
         }
 
@@ -165,7 +169,7 @@ namespace veDDDa
                 //result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
                 //throw new InvalidOperationException("unable to link program");
             }
-
+            
             if (compileStatus != 0 && linkStatus != 0)
             {
                 if (OnInfo != null)

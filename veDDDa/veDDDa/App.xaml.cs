@@ -16,7 +16,7 @@ namespace veDDDa
     public partial class App : Application
     {
         public const double FRAMERATE = 60.0;
-        public const string SHADER_PATH = @".\Shader.glsl";
+        public const string SHADER_PATH = @".\Shader.frag";
         public List<MainWindow> _windows;
         public ControlWindow _controlWindow;
         private void Application_Startup(object sender, StartupEventArgs e)

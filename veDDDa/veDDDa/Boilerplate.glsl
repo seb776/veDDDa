@@ -1,7 +1,8 @@
-﻿#version 330 core
-#define sat(a) clamp(a, 0., 1.)
+﻿#version 100
+precision highp float;
 
-precision mediump float;
+#define IS_VEDDDA_3000
+
 uniform float TopLeftX;
 uniform float TopLeftY;
 uniform float TopRightX;
@@ -10,15 +11,38 @@ uniform float BottomLeftX;
 uniform float BottomLeftY;
 uniform float BottomRightX;
 uniform float BottomRightY;
+ // TODO prefix these
 
-uniform float EyeDistance;
-uniform float EyePosition; // 1 or -1
-uniform float time;
-uniform vec2 resolution;
-out vec4 fragColor;
+// Define the four corners of the desired deformation
+vec2 corners1_0;// = vec2(TopRightX, -TopRightY);
+vec2 corners1_1;// = vec2(TopLeftX, -TopLeftY);
+vec2 corners1_2;// = vec2(BottomLeftX, -BottomLeftY);
+vec2 corners1_3;// = vec2(BottomRightX, -BottomRightY);
+
+void setupCorners()
+{
+	corners1_0 = vec2(TopRightX, -TopRightY);
+	corners1_1 = vec2(TopLeftX, -TopLeftY);
+	corners1_2 = vec2(BottomLeftX, -BottomLeftY);
+	corners1_3 = vec2(BottomRightX, -BottomRightY);
+}
 
 // Thanks IQ :)
+// distance to a line segment
+float sdSegment( in vec2 p, in vec2 a, in vec2 b )
+{
+    p -= a; b -= a;
+	return length( p-b*clamp(dot(p,b)/dot(b,b),0.0,1.0) );
+}
+float _sqrrr(vec2 uv, vec2 sz)
+{
+	vec2 l = abs(uv) - sz;
+	return max(l.x, l.y);
+}
+#define sat(a) clamp(a, 0., 1.)
+// Thanks IQ :)
 float cross2d( in vec2 a, in vec2 b ) { return a.x*b.y - a.y*b.x; }
+
 vec2 invBilinear( in vec2 p, in vec2 a, in vec2 b, in vec2 c, in vec2 d )
 {
     vec2 res = vec2(-1.0);
@@ -58,57 +82,46 @@ vec2 invBilinear( in vec2 p, in vec2 a, in vec2 b, in vec2 c, in vec2 d )
     
     return res;
 }
-// Thanks IQ :)
-// distance to a line segment
-float sdSegment( in vec2 p, in vec2 a, in vec2 b )
+vec3 drawScreenLimits(vec2 uv_, vec2 res_, vec3 col)
 {
-    p -= a; b -= a;
-	return length( p-b*clamp(dot(p,b)/dot(b,b),0.0,1.0) );
-}
-
-__REPLACE__
-
-float _sqrrr(vec2 uv, vec2 sz)
-{
-	vec2 l = abs(uv) - sz;
-	return max(l.x, l.y);
-}
-void main()
-{
-	vec2 uv = (gl_FragCoord.xy-.5*resolution.xy) / resolution.xx;
-// Define the four corners of the desired deformation
-vec2 corners1[4] = vec2[4](
-    vec2(TopRightX, -TopRightY),
-    vec2(TopLeftX, -TopLeftY),
-    vec2(BottomLeftX, -BottomLeftY),
-    vec2(BottomRightX, -BottomRightY)
-);
-
-// Compute the projective transformation matrix
-vec2 deformed_uv = invBilinear(uv, corners1[0], corners1[1], corners1[2], corners1[3]);
-
-    
-	vec3 col = vec3(0.);//rdr(deformed_uv);
-
-    if( max( abs(deformed_uv.x-0.5), abs(deformed_uv.y-0.5))<0.5 )
-    {
-        col = rdr(deformed_uv-.5+ vec2(EyeDistance*.5*EyePosition, 0.));
-    }
-    vec2 a = corners1[0];
-    vec2 b = corners1[1];
-    vec2 c = corners1[2];
-    vec2 d = corners1[3];
-    // quad borders
-    float h = .3/resolution.y;
-    col = mix( col, vec3(1.0,0.7,0.2), 1.0-smoothstep(h,2.0*h,sdSegment(uv,a,b)));
-    col = mix( col, vec3(1.0,0.7,0.2), 1.0-smoothstep(h,2.0*h,sdSegment(uv,b,c)));
-    col = mix( col, vec3(1.0,0.7,0.2), 1.0-smoothstep(h,2.0*h,sdSegment(uv,c,d)));
-    col = mix( col, vec3(1.0,0.7,0.2), 1.0-smoothstep(h,2.0*h,sdSegment(uv,d,a)));
+	vec2 a = corners1_0;
+	vec2 b = corners1_1;
+	vec2 c = corners1_2;
+	vec2 d = corners1_3;
+	// quad borders
+	float h = .3 / res_.y;
+	col = mix(col, vec3(1.0, 0.7, 0.2), 1.0 - smoothstep(h, 2.0*h, sdSegment(uv_, a, b)));
+	col = mix(col, vec3(1.0, 0.7, 0.2), 1.0 - smoothstep(h, 2.0*h, sdSegment(uv_, b, c)));
+	col = mix(col, vec3(1.0, 0.7, 0.2), 1.0 - smoothstep(h, 2.0*h, sdSegment(uv_, c, d)));
+	col = mix(col, vec3(1.0, 0.7, 0.2), 1.0 - smoothstep(h, 2.0*h, sdSegment(uv_, d, a)));
 
 	//uv += vec2(EyeDistance*.5*EyePosition, 0.);
 	//vec3 col = rdr(uv);
-	float screenLim = _sqrrr(uv, vec2(.5)*resolution.xy / resolution.xx);
+	float screenLim = _sqrrr(uv_, vec2(.5)*res_.xy / res_.xx);
 	screenLim = abs(screenLim) - .005;
-	col = mix(col, vec3(0., 0., 1.), 1. - sat(screenLim*resolution.x));
-	fragColor = vec4(col, 1.);
+	col = mix(col, vec3(0., 0., 1.), 1. - sat(screenLim*res_.x));
+	return col;
 }
+
+vec2 getDeformedUV(vec2 uv_)
+{
+	setupCorners();
+	// Compute the projective transformation matrix
+	vec2 deformed_uv = invBilinear(uv_, corners1_0, corners1_1, corners1_2, corners1_3);
+	return deformed_uv;
+}
+
+
+
+uniform float EyeDistance;
+uniform float EyePosition; // 1 or -1
+
+// Veda variables // Have to be defined in shader so...
+//uniform float time;
+//uniform vec2 resolution;
+
+// veDDDa specific
+//out vec4 fragColor;
+
+
+// TODO handle gl_FragCoord & gl_FragColor
