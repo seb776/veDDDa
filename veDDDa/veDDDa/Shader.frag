@@ -3,10 +3,16 @@ precision highp float;
 
 uniform vec2 resolution;
 uniform float time;
-
+uniform sampler2D greyNoise;
 #define sat(a) clamp(a, 0., 1.)
 #define PI 3.14159265
 #define TAU (PI*2.0)
+
+// To replace missing behavior in veda
+vec4 textureRepeat(sampler2D sampler, vec2 uv)
+{
+  return texture2D(sampler, mod(uv, vec2(1.)));
+}
 
 float hash11(float seed)
 {
@@ -146,7 +152,8 @@ void main()
 #endif
       );
 	}
-
+	col *=.2;
+    col += textureRepeat(greyNoise, uv).xxx*0.4;
 #ifdef IS_VEDDDA_3000 // This line draw a blue border around the screen to easily overlay the two images
 	col = drawScreenLimits(baseuv, resolution, col);
 #endif

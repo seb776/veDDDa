@@ -358,11 +358,7 @@
                 <ListView BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Transparent" ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=Logs}">
                     <ListView.ItemTemplate>
                         <ItemContainerTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+                            <Grid Width="750">
                                 <TextBlock Text="{Binding Message}" FontSize="20" TextWrapping="Wrap" Foreground="{Binding LogLevel, Converter={StaticResource LogToColorConvert}}"/>
                             </Grid>
                         </ItemContainerTemplate>

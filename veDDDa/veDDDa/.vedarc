@@ -1,0 +1,13 @@
+{
+  "IMPORTED": {
+    "greyNoise": {
+      "PATH": "./Textures/GreyNoise.jpg",
+    },
+    "cookieTex": {
+      "PATH": "./Textures/Cookie.jpg"
+    }
+  },
+  "pixelRatio": 1.0,
+  "audio": true,
+  "midi": true
+}

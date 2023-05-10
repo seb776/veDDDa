@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -7,6 +12,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace veDDDa
 {
@@ -17,10 +24,14 @@ namespace veDDDa
     {
         public const double FRAMERATE = 60.0;
         public const string SHADER_PATH = @".\Shader.frag";
+        public const string VEDARC_PATH = @".\.vedarc";
+
+        Dictionary<string, int> _loadedTextures;
         public List<MainWindow> _windows;
         public ControlWindow _controlWindow;
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            _loadedTextures = new Dictionary<string, int>();
             _windows = new List<MainWindow>();
 
             MainWindow leftEyeWin = new MainWindow(EEye.LEFT);
@@ -55,7 +66,7 @@ namespace veDDDa
                 foreach (var win in _windows)
                 {
                     win.ForceUpdate();
-                    win.UpdateUniforms(accTime);
+                    win.UpdateUniforms(accTime, _loadedTextures);
                 }
                 //_winformGLControl.Invalidate();
                 //_winformGLControl_Paint(null, null);
@@ -82,6 +93,57 @@ namespace veDDDa
                 watcher.Changed += Watcher_Changed;
 
                 watcher.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            try
+            {
+
+                var vedarc = File.ReadAllText(VEDARC_PATH);
+                var parsedVedarc = JObject.Parse(vedarc);
+                int i = 0;
+                foreach (var import in parsedVedarc["IMPORTED"])
+                {
+
+                    var property = import as JProperty;
+                    var textureName = property.Name;
+                    var texturePath = (import.First().First() as JProperty).Value.ToString();
+                    try
+                    {
+
+                        Image<Rgba32> image = Image.Load<Rgba32>(texturePath);
+
+                        //ImageSharp loads from the top-left pixel, whereas OpenGL loads from the bottom-left, causing the texture to be flipped vertically.
+                        //This will correct that, making the texture display properly.
+                        image.Mutate(x => x.Flip(FlipMode.Vertical));
+
+                        //Use the CopyPixelDataTo function from ImageSharp to copy all of the bytes from the image into an array that we can give to OpenGL.
+                        var pixels = new byte[4 * image.Width * image.Height];
+                        image.CopyPixelDataTo(pixels);
+
+                        // creating a texture
+                        int texture = 0;
+                        GL.GenTextures(1, out texture);
+                        GL.ActiveTexture(TextureUnit.Texture0+i);
+                        GL.BindTexture(TextureTarget.Texture2D, texture);
+                        GL.Enable(EnableCap.Texture2D);
+                        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, pixels);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+                        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+
+                        _loadedTextures.Add(textureName, texture);
+                        LeftEyeWin_OnInfo(ELogLevel.INFO, $"Loaded texture \"{property.Name}\" from path \"{texturePath}\"");
+                    }
+                    catch (Exception exTex)
+                    {
+                        LeftEyeWin_OnInfo(ELogLevel.WARNING, $"Failed to load texture \"{property.Name}\" from path \"{texturePath}\"\n{exTex.ToString()}");
+                    }
+                }
+                ++i;
             }
             catch (Exception ex)
             {

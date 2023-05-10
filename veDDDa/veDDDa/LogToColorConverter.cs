@@ -19,7 +19,7 @@ namespace veDDDa
                 case ELogLevel.INFO:
                     return new SolidColorBrush(Colors.White);
                 case ELogLevel.WARNING:
-                    return new SolidColorBrush(Colors.GreenYellow);
+                    return new SolidColorBrush(Colors.Yellow);
                 case ELogLevel.ERROR:
                     return new SolidColorBrush(Color.FromArgb(0xFF, 0xe0, 0x63, 0x48));
             }

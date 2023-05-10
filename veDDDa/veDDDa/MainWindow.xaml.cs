@@ -51,6 +51,7 @@ namespace veDDDa
         private string _lastWorkingCode;
         public MainWindow(EEye eye)
         {
+            //glEnable(GL_TEXTURE_2D);
             this.DataContext = new MainWindowModel(eye);
             Eye = eye;
             this.Title = $"veDDDa {eye.ToString()} eye";
@@ -92,6 +93,7 @@ namespace veDDDa
 
             GL.Rect(-1, -1, 1, 1);
             GL.Finish();
+            //GL.CopyTexSubImage2D(TextureTarget.Texture2D) // for backbuffer // example // https://stackoverflow.com/questions/33468528/copying-subdata-into-empty-texture-in-opengl-es-webgl
             _winformGLControl.SwapBuffers();
         }
 
@@ -181,7 +183,7 @@ namespace veDDDa
             //_textureALocation = GL.GetUniformLocation(_program, "textureA");
 
         }
-        public void UpdateUniforms(float time)
+        public void UpdateUniforms(float time, Dictionary<string, int> textures)
         {
             GL.UseProgram(_program);
             var timeLoc = GL.GetUniformLocation(_program, "time");
@@ -217,7 +219,16 @@ namespace veDDDa
             var bottomRightY = GL.GetUniformLocation(_program, "BottomRightY");
             GL.Uniform1(bottomRightY, (float)_model.BottomRight.Top);
 
-
+            GL.Enable(EnableCap.Texture2D);
+            int i = 0;
+            foreach (var kvp in textures)
+            {
+                var texLocation = GL.GetUniformLocation(_program, kvp.Key);
+                GL.ActiveTexture(TextureUnit.Texture0 + i);
+                GL.BindTexture(TextureTarget.Texture2D, kvp.Value);
+                GL.Uniform1(texLocation,  i);
+                i++;
+            }
         }
 
         private void Grid_KeyDown(object sender, KeyEventArgs e)
