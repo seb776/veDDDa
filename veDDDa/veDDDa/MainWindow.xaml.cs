@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -57,7 +58,7 @@ namespace veDDDa
             this.Title = $"veDDDa {eye.ToString()} eye";
             size = new Size(800, 600);
             InitializeComponent();
-            _winformGLControl = new GLControl();
+            _winformGLControl = new GLControl(new GraphicsMode(0, 0, 0, 0, 0, 2));
             _winformGLControl.Dock = System.Windows.Forms.DockStyle.Fill;
             _winformGLControl.Margin = new System.Windows.Forms.Padding(0);
             _winformGLControl.Padding = new System.Windows.Forms.Padding(0);
@@ -67,10 +68,30 @@ namespace veDDDa
             //winFormsHost.Height = this.ActualHeight;
             _winformGLControl.Size = new System.Drawing.Size((int)this.ActualWidth, (int)this.ActualHeight);
             this.SizeChanged += MainWindow_SizeChanged;
-        }
 
+
+
+        }
+        public void GenerateBackBufferTexture()
+        {
+            GL.GenTextures(1, out _backbufferTexture);
+            int textureUnit = (_eye == EEye.LEFT ? 1 : 2);
+            GL.ActiveTexture(TextureUnit.Texture0 + textureUnit); // 0 is FFT, 1 is left eye, 2 is right eye  >3 is textures
+            GL.BindTexture(TextureTarget.Texture2D, _backbufferTexture);
+            GL.Enable(EnableCap.Texture2D);
+            byte[] emptyArr = null;
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, (int)this.ActualWidth, (int)this.ActualHeight, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, emptyArr);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+        }
+        int _backbufferTexture = -1;
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            if (_backbufferTexture != -1)
+                GL.DeleteTexture(_backbufferTexture);
+            GenerateBackBufferTexture();
             size = new Size(this.ActualWidth, this.ActualHeight);
             _winformGLControl.Size = new System.Drawing.Size((int)this.ActualWidth, (int)this.ActualHeight);
         }
@@ -85,15 +106,12 @@ namespace veDDDa
         {
             _winformGLControl.MakeCurrent();
             GL.UseProgram(_program);
-            //GL.ActiveTexture(TextureUnit.Texture0);
-            //GL.BindTexture(TextureTarget.Texture2D, _textureName);
-            //GL.Uniform1(_textureALocation, 0);
             GL.Viewport(0, 0, (int)size.Width, (int)size.Height);
-
-
             GL.Rect(-1, -1, 1, 1);
             GL.Finish();
-            //GL.CopyTexSubImage2D(TextureTarget.Texture2D) // for backbuffer // example // https://stackoverflow.com/questions/33468528/copying-subdata-into-empty-texture-in-opengl-es-webgl
+            int textureUnit = (_eye == EEye.LEFT ? 1 : 2);
+            GL.ActiveTexture(TextureUnit.Texture0 + textureUnit);
+            GL.CopyTexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, 0, 0, (int)this.ActualWidth, (int)this.ActualHeight); // for backbuffer // example // https://stackoverflow.com/questions/33468528/copying-subdata-into-empty-texture-in-opengl-es-webgl
             _winformGLControl.SwapBuffers();
         }
 
@@ -220,7 +238,7 @@ namespace veDDDa
             GL.Uniform1(bottomRightY, (float)_model.BottomRight.Top);
 
             GL.Enable(EnableCap.Texture2D);
-            int i = 1; // 0 is reserved for FFT
+            int i = 3; // 0 is reserved for FFT
             foreach (var kvp in textures)
             {
                 var texLocation = GL.GetUniformLocation(_program, kvp.Key);
@@ -229,6 +247,11 @@ namespace veDDDa
                 GL.Uniform1(texLocation,  i);
                 i++;
             }
+            int textureUnit = (_eye == EEye.LEFT ? 1 : 2);
+            var texLocation_ = GL.GetUniformLocation(_program, "backbuffer");
+            GL.ActiveTexture(TextureUnit.Texture0 + textureUnit);
+            GL.BindTexture(TextureTarget.Texture2D, _backbufferTexture);
+            GL.Uniform1(texLocation_, textureUnit);
         }
 
         private void Grid_KeyDown(object sender, KeyEventArgs e)

@@ -108,7 +108,7 @@ namespace veDDDa
                 var vedarc = File.ReadAllText(VEDARC_PATH);
                 var parsedVedarc = JObject.Parse(vedarc);
 
-                int i = 1; // 0 is reserved for fft
+                int i = 3; // 0 is reserved for fft 1 & 2 are reserved
                 foreach (var import in parsedVedarc["IMPORTED"])
                 {
 
@@ -154,6 +154,8 @@ namespace veDDDa
             {
                 Console.WriteLine(ex.ToString());
             }
+            rightEyeWin.GenerateBackBufferTexture();
+            leftEyeWin.GenerateBackBufferTexture();
             _loadedTextures.Add("spectrum", _handleFFT._texture);
             _updateShader();
         }

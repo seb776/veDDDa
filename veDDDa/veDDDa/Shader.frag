@@ -5,6 +5,8 @@ uniform vec2 resolution;
 uniform float time;
 uniform sampler2D greyNoise;
 uniform sampler2D spectrum;
+uniform sampler2D backbuffer;
+
 #define sat(a) clamp(a, 0., 1.)
 #define PI 3.14159265
 #define TAU (PI*2.0)
@@ -126,7 +128,7 @@ uv *= r2d(time*.3);
     col += .5*vec3(1.,.2,.2)*(1.-sat(length(uv)));
     col += accCol;
     col *= 1.-sat(length(uv));
-    float beat = 1./8.;
+    float beat = 1./1.;
     col = mix(col, col.zxy, mod(time, beat)/beat);
     return col;
 }
@@ -134,6 +136,7 @@ uv *= r2d(time*.3);
 
 void main()
 {
+  vec2 ouv = gl_FragCoord.xy / resolution.xy;
 	vec2 uv = (gl_FragCoord.xy - .5*resolution.xy) / resolution.xx; // +.5 to normalize with deforped uv clamping
 	vec2 baseuv = uv;
 #ifdef IS_VEDDDA_3000
@@ -152,10 +155,11 @@ void main()
       + vec2(EyeDistance*.5*EyePosition, 0.)
 #endif
       );
+      col *=.2;
+        col += textureRepeat(greyNoise, uv).xxx*0.1;
+        col+= vec3(1.)*textureRepeat(spectrum, uv).x*.25;
+        col = mix(col, textureRepeat(backbuffer, ouv).xyz, .9);
 	}
-	col *=.2;
-    col += textureRepeat(greyNoise, uv).xxx*0.1;
-    col+= vec3(1.)*textureRepeat(spectrum, uv).x;
 #ifdef IS_VEDDDA_3000 // This line draw a blue border around the screen to easily overlay the two images
 	col = drawScreenLimits(baseuv, resolution, col);
 #endif
