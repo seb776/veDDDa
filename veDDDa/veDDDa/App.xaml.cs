@@ -26,6 +26,7 @@ namespace veDDDa
         public const string SHADER_PATH = @".\Shader.frag";
         public const string VEDARC_PATH = @".\.vedarc";
 
+        private HandleFFT _handleFFT;
         Dictionary<string, int> _loadedTextures;
         public List<MainWindow> _windows;
         public ControlWindow _controlWindow;
@@ -66,6 +67,7 @@ namespace veDDDa
                 foreach (var win in _windows)
                 {
                     win.ForceUpdate();
+                    _handleFFT.PlotSignal();
                     win.UpdateUniforms(accTime, _loadedTextures);
                 }
                 //_winformGLControl.Invalidate();
@@ -98,12 +100,15 @@ namespace veDDDa
             {
                 Console.WriteLine(ex.ToString());
             }
+            _handleFFT = new HandleFFT();
+            _handleFFT.StartListeningToMicrophone(0);
             try
             {
 
                 var vedarc = File.ReadAllText(VEDARC_PATH);
                 var parsedVedarc = JObject.Parse(vedarc);
-                int i = 0;
+
+                int i = 1; // 0 is reserved for fft
                 foreach (var import in parsedVedarc["IMPORTED"])
                 {
 
@@ -126,7 +131,7 @@ namespace veDDDa
                         // creating a texture
                         int texture = 0;
                         GL.GenTextures(1, out texture);
-                        GL.ActiveTexture(TextureUnit.Texture0+i);
+                        GL.ActiveTexture(TextureUnit.Texture0 + i);
                         GL.BindTexture(TextureTarget.Texture2D, texture);
                         GL.Enable(EnableCap.Texture2D);
                         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, pixels);
@@ -149,6 +154,7 @@ namespace veDDDa
             {
                 Console.WriteLine(ex.ToString());
             }
+            _loadedTextures.Add("spectrum", _handleFFT._texture);
             _updateShader();
         }
 

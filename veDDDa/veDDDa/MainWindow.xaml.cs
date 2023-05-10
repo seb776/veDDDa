@@ -220,7 +220,7 @@ namespace veDDDa
             GL.Uniform1(bottomRightY, (float)_model.BottomRight.Top);
 
             GL.Enable(EnableCap.Texture2D);
-            int i = 0;
+            int i = 1; // 0 is reserved for FFT
             foreach (var kvp in textures)
             {
                 var texLocation = GL.GetUniformLocation(_program, kvp.Key);
