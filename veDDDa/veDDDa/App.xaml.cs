@@ -23,8 +23,10 @@ namespace veDDDa
     public partial class App : Application
     {
         public const double FRAMERATE = 60.0;
-        public const string SHADER_PATH = @".\Shader.frag";
-        public const string VEDARC_PATH = @".\.vedarc";
+        public const string SHADER_PATH = @"C:\Users\z0rg\Desktop\AmazeBerlin\Shader.frag";
+        public const string VEDARC_PATH = @"C:\Users\z0rg\Desktop\AmazeBerlin\
+
+.vedarc";
 
         private HandleFFT _handleFFT;
         Dictionary<string, int> _loadedTextures;
