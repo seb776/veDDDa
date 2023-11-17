@@ -14,6 +14,10 @@ using System.Windows;
 using System.Windows.Threading;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using System.Windows.Media.TextFormatting;
+using System.Diagnostics;
+using static OpenTK.Graphics.OpenGL.GL;
+using System.Windows.Media.Media3D;
 
 namespace veDDDa
 {
@@ -23,19 +27,25 @@ namespace veDDDa
     public partial class App : Application
     {
         public const double FRAMERATE = 60.0;
-        public const string SHADER_PATH = @"C:\Users\z0rg\Desktop\AmazeBerlin\Shader.frag";
-        public const string VEDARC_PATH = @"C:\Users\z0rg\Desktop\AmazeBerlin\
-
-.vedarc";
+        public const string SHADER_PATH = @"C:\Users\sebas\OneDrive\Parties\Enscehede_17_11_2023\Shader.frag";
+        public const string VEDARC_PATH = @"C:\Users\sebas\OneDrive\Parties\Enscehede_17_11_2023\.vedarc";
+        public const string HTML_COLORCODE_BOILERPLATE_PATH = @"./BoilerPlate_colorcode.html";
+        public const string HTML_COLORCODE_PATH = @"./index.html";
 
         private HandleFFT _handleFFT;
         Dictionary<string, int> _loadedTextures;
         public List<MainWindow> _windows;
         public ControlWindow _controlWindow;
+        private byte[] _bufferCodeHightlight;
+        private int _textureCodeHightlight = 0; // Pass it through GL Texture unit 3
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            Process.Start("http-server");
             _loadedTextures = new Dictionary<string, int>();
             _windows = new List<MainWindow>();
+
+
 
             MainWindow leftEyeWin = new MainWindow(EEye.LEFT);
             leftEyeWin.OnInfo += LeftEyeWin_OnInfo;
@@ -76,11 +86,27 @@ namespace veDDDa
                 //_winformGLControl_Paint(null, null);
             };
             timer.Start();
+
+
             var controlWin = new ControlWindow(this);
             _controlWindow = controlWin;
             controlWin.OnClickNewWindow += ControlWin_OnClickNewWindow;
             controlWin.SetWatchingFile(SHADER_PATH);
             controlWin.Show();
+            //DispatcherTimer timerCodeHighlight = new DispatcherTimer(DispatcherPriority.Send);
+            //timerCodeHighlight.Interval = TimeSpan.FromMilliseconds(1000.0 / 2.0);
+            //timerCodeHighlight.Tick += (s, _) =>
+            //{
+
+            //    int codetexWidth_ = 0;
+            //    int codetexHeight_ = 0;
+            //    controlWin.CaptureCodeHighlight(_bufferCodeHightlight, ref codetexWidth_, ref codetexHeight_);
+            //    foreach (var win in _windows)
+            //    {
+            //        win.UpdateCodeHighlightTexture(_textureCodeHightlight, _bufferCodeHightlight, codetexWidth_, codetexHeight_);
+            //    }
+            //};
+            //timerCodeHighlight.Start();
             try
             {
 
@@ -110,7 +136,7 @@ namespace veDDDa
                 var vedarc = File.ReadAllText(VEDARC_PATH);
                 var parsedVedarc = JObject.Parse(vedarc);
 
-                int i = 3; // 0 is reserved for fft 1 & 2 are reserved
+                int i = 4; // 0 is reserved for fft 1 & 2 are reserved for eyes backbuffer, 3 is reserved for code highlight
                 foreach (var import in parsedVedarc["IMPORTED"])
                 {
 
@@ -142,7 +168,7 @@ namespace veDDDa
                         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
                         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
-                        _loadedTextures.Add(textureName, texture);
+                        _loadedTextures.Add(textureName, i); // i is texture unit
                         LeftEyeWin_OnInfo(ELogLevel.INFO, $"Loaded texture \"{property.Name}\" from path \"{texturePath}\"");
                     }
                     catch (Exception exTex)
@@ -158,7 +184,20 @@ namespace veDDDa
             }
             rightEyeWin.GenerateBackBufferTexture();
             leftEyeWin.GenerateBackBufferTexture();
-            _loadedTextures.Add("spectrum", _handleFFT._texture);
+            _loadedTextures.Add("spectrum", 0);
+            int codetexWidth = 0;
+            int codetexHeight = 0;
+            controlWin.CaptureCodeHighlight(_bufferCodeHightlight, ref codetexWidth, ref codetexHeight);
+            _bufferCodeHightlight = new byte[codetexWidth * codetexHeight * 4];
+            GL.GenTextures(1, out _textureCodeHightlight);
+            GL.ActiveTexture(TextureUnit.Texture0 + 3);
+            GL.BindTexture(TextureTarget.Texture2D, _textureCodeHightlight);
+            GL.Enable(EnableCap.Texture2D);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            _loadedTextures.Add("codeHighlight", 3);
             _updateShader();
         }
 
@@ -198,15 +237,43 @@ namespace veDDDa
             {
                 try
                 {
-
                     var shaderCode = File.ReadAllText(SHADER_PATH);
+                    var htmlBoilerPlate = File.ReadAllText(HTML_COLORCODE_BOILERPLATE_PATH);
+                    var generatedHTML = htmlBoilerPlate.Replace("{INJECT_GLSL_CODE}", shaderCode);
+                    File.WriteAllText(HTML_COLORCODE_PATH, generatedHTML);
+
+                    // Run command  --headless --disable-gpu --screenshot="C:\screenshot.png" http://127.0.0.1:8080/
+
+                    string chromePath = @"C:\Program Files\Google\Chrome\Application\chrome.exe";
+                    var arguments = $"--headless --disable-gpu --hide-scrollbars --window-size=1920,10000 --start-maximized --screenshot=\"C:\\screenshot.png\" http://127.0.0.1:8080/";
+
+                    var procStartInfo = new ProcessStartInfo();
+                    procStartInfo.RedirectStandardInput = true;
+                    procStartInfo.FileName = chromePath;
+                    procStartInfo.Arguments = arguments;
+                    procStartInfo.UseShellExecute = false;
+                    var proc = new Process { StartInfo = procStartInfo };
+                    proc.Start();
+                    proc.StandardInput.Write("\n\n\n");
+                    //proc.WaitForExit();
+
+                    int codetexWidth_ = 0;
+                    int codetexHeight_ = 0;
+                    _controlWindow.CaptureCodeHighlight(_bufferCodeHightlight, ref codetexWidth_, ref codetexHeight_);
+                    foreach (var win in _windows)
+                    {
+                        win.UpdateCodeHighlightTexture(_textureCodeHightlight, _bufferCodeHightlight, codetexWidth_, codetexHeight_);
+                    }
+
                     foreach (var win in _windows)
                     {
                         win.UpdateShaderCode(shaderCode);
                     }
                     loaded = true;
                 }
-                catch (Exception e) { }
+                catch (Exception e) {
+                    Console.WriteLine(e.ToString());
+                }
             }
         }
         private void Watcher_Changed(object sender, FileSystemEventArgs e)

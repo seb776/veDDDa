@@ -50,6 +50,7 @@ namespace veDDDa
         private int _program;
         private Size size;
         private string _lastWorkingCode;
+
         public MainWindow(EEye eye)
         {
             //glEnable(GL_TEXTURE_2D);
@@ -76,7 +77,7 @@ namespace veDDDa
         {
             GL.GenTextures(1, out _backbufferTexture);
             int textureUnit = (_eye == EEye.LEFT ? 1 : 2);
-            GL.ActiveTexture(TextureUnit.Texture0 + textureUnit); // 0 is FFT, 1 is left eye, 2 is right eye  >3 is textures
+            GL.ActiveTexture(TextureUnit.Texture0 + textureUnit); // 0 is FFT, 1 is left eye, 2 is right eye 3 is code texture  > 3 is textures
             GL.BindTexture(TextureTarget.Texture2D, _backbufferTexture);
             GL.Enable(EnableCap.Texture2D);
             byte[] emptyArr = null;
@@ -238,20 +239,34 @@ namespace veDDDa
             GL.Uniform1(bottomRightY, (float)_model.BottomRight.Top);
 
             GL.Enable(EnableCap.Texture2D);
-            int i = 3; // 0 is reserved for FFT
             foreach (var kvp in textures)
             {
                 var texLocation = GL.GetUniformLocation(_program, kvp.Key);
-                GL.ActiveTexture(TextureUnit.Texture0 + i);
-                GL.BindTexture(TextureTarget.Texture2D, kvp.Value);
-                GL.Uniform1(texLocation,  i);
-                i++;
+                GL.Uniform1(texLocation,  kvp.Value);
             }
             int textureUnit = (_eye == EEye.LEFT ? 1 : 2);
             var texLocation_ = GL.GetUniformLocation(_program, "backbuffer");
             GL.ActiveTexture(TextureUnit.Texture0 + textureUnit);
             GL.BindTexture(TextureTarget.Texture2D, _backbufferTexture);
             GL.Uniform1(texLocation_, textureUnit);
+        }
+
+        public void UpdateCodeHighlightTexture(int textureTarget, byte[] buffer, int width, int height)
+        {
+            try
+            {
+
+            GL.Enable(EnableCap.Texture2D);
+            GL.ActiveTexture(TextureUnit.Texture0 + 3);
+            GL.BindTexture(TextureTarget.Texture2D, textureTarget);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, buffer);
+            }
+            catch (Exception ex)
+            {
+            // Memory access exception on teximage2D
+
+            }
+
         }
 
         private void Grid_KeyDown(object sender, KeyEventArgs e)
@@ -280,6 +295,25 @@ namespace veDDDa
                     Console.WriteLine("OFF");
                 }
             }
+        }
+
+ 
+        private void webBrowser_LoadCompleted(object sender, NavigationEventArgs e)
+        {
+            var browser = sender as WebBrowser;
+
+            if (browser == null || browser.Document == null)
+                return;
+
+            dynamic document = browser.Document;
+
+            if (document.readyState != "complete")
+                return;
+
+            dynamic script = document.createElement("script");
+            script.type = @"text/javascript";
+            script.text = @"window.onerror = function(msg,url,line){return true;}";
+            document.head.appendChild(script);
         }
     }
 }

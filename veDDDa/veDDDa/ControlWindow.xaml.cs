@@ -1,6 +1,9 @@
-﻿using System;
+﻿using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +14,12 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using System.Diagnostics;
 
 namespace veDDDa
 {
@@ -46,6 +54,36 @@ namespace veDDDa
 
         public MainWindow LeftEyeWin { get { return _app._windows.Find((el) => { return el.Eye == EEye.LEFT; }); } }
         public MainWindow RightEyeWin { get { return _app._windows.Find((el) => { return el.Eye == EEye.RIGHT; }); } }
+        public void CaptureCodeHighlight(byte[] buffer, ref int width, ref int height)
+        {
+            // Picture is generated on code changes (APP.updateShader) => we should do image loading there too
+
+            // Load image
+            try
+            {
+
+                Image<Rgba32> image = SixLabors.ImageSharp.Image.Load<Rgba32>("C:\\screenshot.png");
+                width = image.Width;
+                height = image.Height;
+                //ImageSharp loads from the top-left pixel, whereas OpenGL loads from the bottom-left, causing the texture to be flipped vertically.
+                //This will correct that, making the texture display properly.
+                image.Mutate(x => x.Flip(FlipMode.Vertical));
+
+                image.CopyPixelDataTo(buffer);
+            }
+            catch (Exception ex) {
+                return;
+            }
+
+            // =============== This approach does not work as the webbrowser content is not part of the WPF rendering
+            // Stride = (width) x (bytes per pixel)
+            //int stride = (int)1920 * (32 / 8);
+
+            //RenderTargetBitmap renderTargetBitmap =
+            // new RenderTargetBitmap(1920, 1080, 96, 96, PixelFormats.Pbgra32);
+            //renderTargetBitmap.Render(this.webBrowser);
+            //renderTargetBitmap.CopyPixels(buffer, stride, 0);
+        }
         public void SetWatchingFile(string file)
         {
             this.textRunFilepath.Text = file;

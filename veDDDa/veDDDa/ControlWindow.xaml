@@ -471,6 +471,8 @@
                     </Grid>
                 </Button>
                 <TextBlock TextWrapping="Wrap" Foreground="Orange" Background="#606060" Height="100" x:Name="LogsTB"/>
+                <!--<WebBrowser x:Name="webBrowser" Source="file:///C:\Users\sebas\OneDrive\Parties\Utrecht_15_11_2023\index.html">
+                </WebBrowser>-->
             </WrapPanel>
             <Grid DataContext="{Binding ElementName=parentLeft}" x:Name="proxyParentLeft"></Grid>
             <Canvas Grid.Column="0" ClipToBounds="True"   Height="150" Width="200"  VerticalAlignment="Top" x:Name="parentLeft" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=LeftEyeWin.DataContext}" MouseMove="parentLeft_MouseMove" MouseUp="parentLeft_MouseUp">

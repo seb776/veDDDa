@@ -8,9 +8,7 @@
         mc:Ignorable="d"
          WindowState="Maximized">
     <Grid Background="Red" Margin="0" Keyboard.KeyDown="Grid_KeyDown">
-
         <WindowsFormsHost x:Name="winFormsHost" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="0" Padding="0">
-
         </WindowsFormsHost>
     </Grid>
 </Window>
